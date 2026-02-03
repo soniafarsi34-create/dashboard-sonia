@@ -2,131 +2,260 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Sonia AI Sales Intelligence</title>
+<title>Sonia Intelligence</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 
-body{
-  font-family: Arial;
-  background:#e9eef5;
-  padding:20px;
+/* ===== THEME ===== */
+
+:root{
+ --main:#0071e3;
+ --bg:#f5f7fb;
+ --card:#ffffff;
+ --dark:#1d1d1f;
 }
 
-h1{text-align:center;color:#333}
+body{
+ margin:0;
+ font-family:Poppins, sans-serif;
+ background:var(--bg);
+ color:var(--dark);
+}
 
-.box{
-  background:white;
-  padding:15px;
-  margin:15px 0;
-  border-radius:12px;
-  box-shadow:0 0 12px #ccc;
+
+/* ===== HEADER ===== */
+
+header{
+ background:white;
+ padding:15px 25px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ box-shadow:0 2px 10px rgba(0,0,0,.05);
+ position:sticky;
+ top:0;
+ z-index:10;
+}
+
+nav a{
+ margin:0 12px;
+ text-decoration:none;
+ color:#333;
+ font-weight:500;
+}
+
+nav a:hover{color:var(--main)}
+
+
+/* ===== LAYOUT ===== */
+
+.container{
+ max-width:1000px;
+ margin:auto;
+ padding:20px;
+}
+
+.page{display:none}
+.page.active{display:block}
+
+.card{
+ background:var(--card);
+ border-radius:16px;
+ padding:20px;
+ margin-bottom:20px;
+ box-shadow:0 10px 25px rgba(0,0,0,.05);
 }
 
 button{
-  width:100%;
-  padding:12px;
-  background:#5a67d8;
-  color:white;
-  border:none;
-  border-radius:8px;
-  font-size:16px;
+ background:var(--main);
+ color:white;
+ border:none;
+ padding:12px 18px;
+ border-radius:10px;
+ cursor:pointer;
 }
 
-input,select,textarea{
-  width:100%;
-  padding:8px;
-  margin:5px 0;
+input,textarea{
+ width:100%;
+ padding:10px;
+ margin:8px 0;
+ border-radius:8px;
+ border:1px solid #ddd;
 }
 
-.flex{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+ gap:15px;
 }
 
-.card{
-  flex:1;
-  min-width:150px;
-  background:#f7f9fc;
-  padding:10px;
-  border-radius:8px;
-  text-align:center;
+.kpi{
+ background:#f1f4ff;
+ padding:15px;
+ border-radius:12px;
+ text-align:center;
 }
+
+
+/* ===== CHAT ===== */
 
 .chat{
-  height:220px;
-  overflow:auto;
-  border:1px solid #ddd;
-  padding:10px;
-  background:#fafafa;
+ height:220px;
+ overflow:auto;
+ background:#fafafa;
+ border-radius:10px;
+ padding:10px;
+ border:1px solid #eee;
 }
 
-.msg-u{color:#5a67d8}
-.msg-a{color:#222}
+.user{color:var(--main)}
+.ai{color:#333}
+
+footer{
+ text-align:center;
+ padding:20px;
+ color:#777;
+ font-size:13px;
+}
 
 </style>
 </head>
 
 <body>
 
-<h1>🚀 Sonia AI Sales Intelligence</h1>
+<!-- ===== HEADER ===== -->
 
-<!-- UPLOAD -->
-<div class="box">
-<h3>📂 Carica File (Excel / CSV / TXT)</h3>
-<input type="file" id="file" multiple>
+<header>
+
+<h3>🍏 Sonia Intelligence</h3>
+
+<nav>
+ <a onclick="go('home')">Home</a>
+ <a onclick="go('dashboard')">Dashboard</a>
+ <a onclick="go('shop')">Shop AI</a>
+ <a onclick="go('vision')">Image AI</a>
+ <a onclick="go('chat')">Advisor</a>
+</nav>
+
+</header>
+
+
+<div class="container">
+
+<!-- ================= HOME ================= -->
+
+<div id="home" class="page active">
+
+<div class="card">
+<h2>✨ Welcome Sonia</h2>
+
+<p>
+Sistema intelligente per <b>shop.tuttoantico.it</b><br>
+Analisi • Strategia • AI • Crescita
+</p>
+
+<button onclick="go('dashboard')">Vai alla Dashboard</button>
+</div>
+
+</div>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<div id="dashboard" class="page">
+
+<div class="card">
+<h3>📂 Carica Dati Vendite</h3>
+<input type="file" id="file">
 <button onclick="load()">Analizza</button>
 </div>
 
-<!-- KPI -->
-<div class="box">
-<h3>📊 KPI Principali</h3>
-<div class="flex" id="kpi"></div>
+<div class="card">
+<h3>📊 KPI</h3>
+<div class="grid" id="kpi"></div>
 </div>
 
-<!-- GRAFICI -->
-<div class="box">
-<h3>📈 Performance</h3>
-<canvas id="sales"></canvas>
-</div>
-
-<div class="box">
-<h3>🏪 Canali</h3>
+<div class="card">
+<h3>📈 Canali</h3>
 <canvas id="channels"></canvas>
 </div>
 
-<div class="box">
-<h3>🎨 Prodotti / Tipologie</h3>
-<canvas id="types"></canvas>
-</div>
-
-<div class="box">
-<h3>📅 Stagionalità</h3>
-<canvas id="months"></canvas>
-</div>
-
-<!-- AI -->
-<div class="box">
+<div class="card">
 <h3>🧠 AI Insights</h3>
 <div id="ai"></div>
 </div>
 
-<!-- STRATEGY -->
-<div class="box">
-<h3>🎯 Strategia & Alert</h3>
-<div id="strategy"></div>
 </div>
 
-<!-- CHAT -->
-<div class="box">
-<h3>💬 Business Chat AI</h3>
-<div class="chat" id="chat"></div>
-<input id="q" placeholder="Chiedi qualcosa sul business...">
-<button onclick="ask()">Invia</button>
+
+<!-- ================= SHOP ================= -->
+
+<div id="shop" class="page">
+
+<div class="card">
+<h3>🛍️ Analisi Shop</h3>
+
+<p>Inserisci nome prodotto dal tuo sito:</p>
+
+<input id="prod" placeholder="Es. Mobile antico">
+
+<button onclick="shopAI()">Analizza Prodotto</button>
+
+<div id="shopResult"></div>
 </div>
+
+</div>
+
+
+<!-- ================= VISION ================= -->
+
+<div id="vision" class="page">
+
+<div class="card">
+<h3>🖼️ Image Intelligence</h3>
+
+<p>Carica foto prodotto → Cerca online</p>
+
+<input type="file" id="img">
+
+<button onclick="lens()">Cerca Simili</button>
+
+<div id="lensResult"></div>
+</div>
+
+</div>
+
+
+<!-- ================= CHAT ================= -->
+
+<div id="chat" class="page">
+
+<div class="card">
+
+<h3>💬 Business Advisor AI</h3>
+
+<div class="chat" id="chatbox"></div>
+
+<input id="q" placeholder="Chiedi una strategia...">
+
+<button onclick="ask()">Invia</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+© 2026 Sonia Intelligence System
+</footer>
+
 
 <script>
 
@@ -134,295 +263,240 @@ let data=[];
 let stats={};
 
 
-// ================= FILE LOADER =================
+// ========== NAV ==========
+
+function go(p){
+
+ document.querySelectorAll(".page")
+ .forEach(x=>x.classList.remove("active"));
+
+ document.getElementById(p).classList.add("active");
+}
+
+
+// ========== LOAD FILE ==========
 
 function load(){
 
-const files=document.getElementById("file").files;
+let f=document.getElementById("file").files[0];
+if(!f){alert("Carica file");return;}
 
-if(!files.length){
- alert("Carica almeno un file");
- return;
-}
+let r=new FileReader();
 
-data=[];
+r.onload=e=>{
 
-let loaded=0;
+ let wb=XLSX.read(e.target.result,{type:"binary"});
+ let sh=wb.Sheets[wb.SheetNames[0]];
+ data=XLSX.utils.sheet_to_json(sh);
 
-for(let f of files){
+ analyze();
+};
 
- const r=new FileReader();
-
- r.onload=e=>{
-
-  if(f.name.endsWith(".csv") || f.name.endsWith(".txt")){
-   parseCSV(e.target.result);
-  }else{
-   const wb=XLSX.read(e.target.result,{type:"binary"});
-   const sh=wb.Sheets[wb.SheetNames[0]];
-   data=data.concat(XLSX.utils.sheet_to_json(sh));
-  }
-
-  loaded++;
-
-  if(loaded===files.length) analyze();
- };
-
- if(f.name.endsWith(".csv")||f.name.endsWith(".txt")){
-  r.readAsText(f);
- }else{
-  r.readAsBinaryString(f);
- }
-}
-
+r.readAsBinaryString(f);
 }
 
 
-function parseCSV(t){
-
-const rows=t.split("\n");
-
-const head=rows[0].split(",");
-
-for(let i=1;i<rows.length;i++){
-
- let obj={};
-
- let cols=rows[i].split(",");
-
- head.forEach((h,j)=>{
-  obj[h.trim()]=cols[j];
- });
-
- data.push(obj);
-}
-
-}
-
-
-// ================= ANALYSIS =================
+// ========== ANALYSIS ==========
 
 function analyze(){
 
-let tot=0,prof=0,qty=0;
-
-let channels={},types={},months={};
+let tot=0,prof=0;
+let ch={};
 
 data.forEach(r=>{
 
- let p=Number(r["prezzo di vendita"]||r["price"]||0);
- let pr=Number(r["profitto"]||r["profit"]||0);
- let q=Number(r["quantita"]||1);
+ let p=Number(r["prezzo di vendita"]||0);
+ let pr=Number(r["profitto"]||0);
+ let c=r["luogo di vendita"];
 
- let c=r["luogo di vendita"]||r["channel"];
- let t=r["TIPOLOGIA"]||r["type"];
- let m=r["MeseNorm"]||r["month"];
-
- if(p>0){
-
+ if(p){
   tot+=p;
   prof+=pr;
-  qty+=q;
-
-  if(c) channels[c]=(channels[c]||0)+p;
-  if(t) types[t]=(types[t]||0)+p;
-  if(m) months[m]=(months[m]||0)+p;
+  if(c) ch[c]=(ch[c]||0)+p;
  }
 });
 
-stats={tot,prof,qty,channels,types,months};
+stats={tot,prof,ch};
 
-showKPI();
-charts();
-aiInsights();
-strategy();
-
+kpi();
+chart();
+ai();
 }
 
 
-// ================= KPI =================
+// ========== KPI ==========
 
-function showKPI(){
+function kpi(){
 
 let m=(stats.prof/stats.tot*100)||0;
 
-let avg=stats.tot/(stats.qty||1);
-
 document.getElementById("kpi").innerHTML=`
 
-<div class="card">💶<br><b>${stats.tot.toFixed(0)}€</b><br>Vendite</div>
+<div class="kpi">💶<br><b>${stats.tot.toFixed(0)}€</b></div>
 
-<div class="card">📈<br><b>${stats.prof.toFixed(0)}€</b><br>Profitto</div>
+<div class="kpi">📈<br><b>${stats.prof.toFixed(0)}€</b></div>
 
-<div class="card">📊<br><b>${m.toFixed(1)}%</b><br>Margine</div>
+<div class="kpi">📊<br><b>${m.toFixed(1)}%</b></div>
 
-<div class="card">🛒<br><b>${stats.qty}</b><br>Pezzi</div>
-
-<div class="card">💳<br><b>${avg.toFixed(0)}€</b><br>Scontrino Medio</div>
+<div class="kpi">🚀<br><b>${stats.tot>50000?"PRO":"START"}</b></div>
 
 `;
-
 }
 
 
-// ================= CHARTS =================
+// ========== CHART ==========
 
-function charts(){
+function chart(){
 
-bar("channels",stats.channels,"Canali");
-bar("types",stats.types,"Tipologie");
-bar("months",stats.months,"Mesi");
+let ctx=document.getElementById("channels");
 
-}
-
-
-function bar(id,obj,label){
-
-let ctx=document.getElementById(id);
-
-if(ctx.chart) ctx.chart.destroy();
+if(ctx.chart)ctx.chart.destroy();
 
 ctx.chart=new Chart(ctx,{
  type:"bar",
  data:{
-  labels:Object.keys(obj),
+  labels:Object.keys(stats.ch),
   datasets:[{
-   label,
-   data:Object.values(obj)
+   label:"Canali",
+   data:Object.values(stats.ch),
+   backgroundColor:"#0071e3"
   }]
  }
 });
-
 }
 
 
-// ================= AI =================
+// ========== AI ==========
 
-function aiInsights(){
+function ai(){
 
-let bestC=max(stats.channels);
-let bestT=max(stats.types);
+let best=max(stats.ch);
 
-let m=stats.prof/stats.tot;
+let t=`
 
-let txt=`
+🔥 Miglior canale: <b>${best}</b><br>
+💡 Consiglio: investi qui<br>
 
-🔥 Miglior canale: <b>${bestC}</b><br>
-💎 Miglior prodotto: <b>${bestT}</b><br>
-📊 Margine: <b>${(m*100).toFixed(1)}%</b><br><br>
+📌 Aumenta margini del 5–10%
 
 `;
 
-if(m<0.25){
- txt+="⚠️ Margine critico → rivedi prezzi<br>";
+if(stats.prof/stats.tot<0.3){
+ t+="<br>⚠️ Margine basso";
 }
 
-if(stats.qty<50){
- txt+="📦 Volume basso → aumenta marketing<br>";
-}
-
-if(stats.tot>50000){
- txt+="🚀 Performance top-level<br>";
-}
-
-txt+="<br>👉 Focus: "+bestT+" su "+bestC;
-
-document.getElementById("ai").innerHTML=txt;
-
+document.getElementById("ai").innerHTML=t;
 }
 
 
-// ================= STRATEGY =================
+// ========== SHOP AI ==========
 
-function strategy(){
+function shopAI(){
 
-let worstC=min(stats.channels);
-let worstT=min(stats.types);
+let p=document.getElementById("prod").value;
 
-let s=`
+if(!p)return;
 
-❌ Canale debole: ${worstC}<br>
-⚠️ Prodotto debole: ${worstT}<br><br>
+let url="https://www.google.com/search?q="+encodeURIComponent(p+" sito:tuttoantico.it");
 
-✅ Test promozioni su ${worstT}<br>
-✅ Bundle con ${max(stats.types)}<br>
-✅ Aumenta presenza su ${max(stats.channels)}
+document.getElementById("shopResult").innerHTML=`
+
+🔍 Analisi: <b>${p}</b><br><br>
+
+<a href="${url}" target="_blank">
+📊 Cerca sul tuo shop
+</a><br><br>
+
+💡 Strategia:
+• Verifica prezzo medio
+• Confronta concorrenti
+• Valuta rarità
 
 `;
 
-document.getElementById("strategy").innerHTML=s;
+}
+
+
+// ========== IMAGE AI ==========
+
+function lens(){
+
+let f=document.getElementById("img").files[0];
+
+if(!f){alert("Carica immagine");return;}
+
+let url="https://lens.google.com/upload";
+
+document.getElementById("lensResult").innerHTML=`
+
+📸 Apri Google Lens:
+
+<a href="${url}" target="_blank">
+Vai a Lens
+</a><br><br>
+
+Carica la foto → trova prezzo → confronta
+
+`;
 
 }
 
 
-// ================= CHAT =================
+// ========== CHAT ==========
 
 function ask(){
 
-let q=document.getElementById("q").value.toLowerCase();
+let q=document.getElementById("q").value;
 if(!q)return;
 
-add("Tu",q,"msg-u");
+add("Tu",q,"user");
 
-let r=aiChat(q);
+let r=aiChat(q.toLowerCase());
 
-setTimeout(()=>add("AI",r,"msg-a"),500);
+setTimeout(()=>add("AI",r,"ai"),400);
 
 document.getElementById("q").value="";
-
 }
 
 
 function add(u,t,c){
 
-let d=document.getElementById("chat");
+let d=document.getElementById("chatbox");
 
 d.innerHTML+=`<div class="${c}"><b>${u}:</b> ${t}</div>`;
 
 d.scrollTop=d.scrollHeight;
-
 }
 
+
+// ========== AI LOGIC ==========
 
 function aiChat(q){
 
-if(q.includes("dove")&&q.includes("vend")){
- return "Vendi meglio su "+max(stats.channels);
-}
-
-if(q.includes("perché")){
- return "Dipende da mix prodotti, prezzi e stagionalità";
-}
-
-if(q.includes("invest")){
- return "Investi su "+max(stats.types)+" in "+max(stats.channels);
-}
-
-if(q.includes("profit")){
- return "Profitto: "+stats.prof.toFixed(0)+"€";
+if(q.includes("compra")){
+ return "Compra pezzi rari e certificati";
 }
 
 if(q.includes("prezzo")){
- return "Valuta aumento del 5-10% sui top prodotti";
+ return "Aumenta del 5% sui bestseller";
+}
+
+if(q.includes("vend")){
+ return "Spingi su "+max(stats.ch);
 }
 
 if(q.includes("futuro")){
- return "Trend positivo su "+max(stats.types);
+ return "Trend positivo su antiquariato autentico";
 }
 
-return "Strategia: focus su "+max(stats.types)+" via "+max(stats.channels);
-
+return "Strategia: qualità + storytelling";
 }
 
 
-// ================= UTILS =================
+// ========== UTILS ==========
 
 function max(o){
  return Object.keys(o).reduce((a,b)=>o[a]>o[b]?a:b);
-}
-
-function min(o){
- return Object.keys(o).reduce((a,b)=>o[a]<o[b]?a:b);
 }
 
 </script>

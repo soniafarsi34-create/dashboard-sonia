@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <title>Antiquarium AI Suite — Sonia</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
 :root{
@@ -13,7 +14,6 @@
  --card:#0d1119;
  --gold:#d4af37;
  --txt:#eee;
- --muted:#777;
 }
 
 body{
@@ -62,7 +62,7 @@ nav a:hover{color:var(--gold)}
 
 h3{color:var(--gold)}
 
-input,select,textarea{
+input,select{
  width:100%;
  background:#080b12;
  border:1px solid #222;
@@ -128,7 +128,7 @@ th{color:var(--gold)}
 <body>
 
 <header>
-<h2>ANTIQUARIUM · AI SUITE</h2>
+<h2>ANTIQUARIUM · AI ANALYTICS</h2>
 
 <nav>
 <a onclick="go('dashboard')">Dashboard</a>
@@ -136,8 +136,7 @@ th{color:var(--gold)}
 <a onclick="go('buys')">Acquisti</a>
 <a onclick="go('stock')">Magazzino</a>
 <a onclick="go('analytics')">Analytics</a>
-<a onclick="go('catalog')">Catalogo</a>
-<a onclick="go('forecast')">Previsioni</a>
+<a onclick="go('import')">Import File</a>
 <a onclick="go('advisor')">AI</a>
 <a onclick="go('backup')">Backup</a>
 </nav>
@@ -208,28 +207,16 @@ th{color:var(--gold)}
 <div class="card"><canvas id="chart2"></canvas></div>
 </div>
 
-<!-- CATALOG -->
-<div id="catalog" class="page">
+<!-- IMPORT -->
+<div id="import" class="page">
 <div class="card">
-<h3>📝 Scheda Opera</h3>
+<h3>📂 Importa File CSV / Excel</h3>
 
-<input id="c_name" placeholder="Nome">
-<input id="c_era" placeholder="Epoca">
-<input id="c_mat" placeholder="Materiale">
-<input id="c_dim" placeholder="Dimensioni">
+<input type="file" id="fileInput" accept=".csv">
 
-<button onclick="describe()">Genera</button>
+<button onclick="importFile()">Analizza File</button>
 
-<div id="desc"></div>
-</div>
-</div>
-
-<!-- FORECAST -->
-<div id="forecast" class="page">
-<div class="card">
-<h3>🔮 Previsioni</h3>
-<button onclick="forecast()">Calcola</button>
-<div id="forecastRes"></div>
+<div id="importRes"></div>
 </div>
 </div>
 
@@ -240,7 +227,7 @@ th{color:var(--gold)}
 
 <div class="chat" id="chat"></div>
 
-<input id="q" placeholder="Chiedi qualcosa">
+<input id="q" placeholder="Fai una domanda">
 
 <button onclick="ask()">Invia</button>
 </div>
@@ -277,6 +264,7 @@ function save(){
 
 /* ADD */
 function addSale(){
+
  if(!s_name.value||!s_price.value)return;
 
  sales.push({
@@ -290,6 +278,7 @@ function addSale(){
 }
 
 function addBuy(){
+
  if(!b_name.value||!b_price.value)return;
 
  buys.push({
@@ -323,6 +312,7 @@ function render(){
 
 /* TABLES */
 function renderSales(){
+
  let h="<tr><th>Oggetto</th><th>Prezzo</th><th>Costo</th><th>Profitto</th><th>Data</th></tr>";
 
  sales.forEach(s=>{
@@ -340,6 +330,7 @@ function renderSales(){
 }
 
 function renderBuys(){
+
  let h="<tr><th>Oggetto</th><th>Prezzo</th><th>Data</th></tr>";
 
  buys.forEach(b=>{
@@ -417,27 +408,44 @@ function renderCharts(){
 
 }
 
-/* CATALOG AI */
-function describe(){
+/* IMPORT FILE */
+function importFile(){
 
- desc.innerHTML=`
+ let file=fileInput.files[0];
 
-<b>${c_name.value}</b>, opera dell'epoca ${c_era.value},
-in ${c_mat.value}. Dimensioni: ${c_dim.value}.
+ if(!file) return alert("Seleziona un file CSV");
 
-Esemplare di pregio storico e collezionistico.
+ Papa.parse(file,{
+  header:true,
+  skipEmptyLines:true,
+  complete:function(res){
 
- `;
-}
+   let rows=res.data;
 
-/* FORECAST */
-function forecast(){
+   let count=0;
 
- let avg=sales.reduce((a,b)=>a+b.price,0)/(sales.length||1);
+   rows.forEach(r=>{
 
- let next=(avg*1.15).toFixed(0);
+    if(r.nome && r.prezzo){
 
- forecastRes.innerHTML=`Prossimo mese stimato: <b>${next}€</b>`;
+     sales.push({
+      name:r.nome,
+      price:+r.prezzo,
+      cost:+r.costo||0,
+      date:r.data||""
+     });
+
+     count++;
+    }
+
+   });
+
+   save();
+   render();
+
+   importRes.innerHTML=`Importate ${count} righe ✔️`;
+  }
+ });
 }
 
 /* AI */
@@ -448,7 +456,7 @@ function renderAI(){
 
  let txt="Sistema operativo.";
 
- if(cost>rev) txt="⚠️ Stai spendendo troppo.";
+ if(cost>rev) txt="⚠️ Costi alti.";
  if(rev>cost) txt="✅ Business sano.";
 
  chat.innerHTML=`<div class="ai">${txt}</div>`;
@@ -460,10 +468,10 @@ function ask(){
 
  chat.innerHTML+=`<div class="user">${qv}</div>`;
 
- let r="Investi in pezzi rari e certificati.";
+ let r="Strategia: investi in pezzi rari.";
 
- if(qv.includes("perdo")) r="Riduci costi fissi.";
- if(qv.includes("prezzi")) r="Aumenta del 5-10%.";
+ if(qv.includes("perdo")) r="Riduci costi.";
+ if(qv.includes("prezzi")) r="Aumenta margini.";
 
  setTimeout(()=>{
   chat.innerHTML+=`<div class="ai">${r}</div>`;

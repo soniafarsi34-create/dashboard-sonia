@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Antiquarium Ultimate AI — Sonia</title>
+<title>Antiquarium Intelligence — Sonia</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800&display=swap" rel="stylesheet">
 
@@ -130,19 +130,16 @@ th{color:var(--gold)}
 <body>
 
 <header>
-<h2>ANTIQUARIUM · ULTIMATE AI</h2>
+<h2>ANTIQUARIUM · INTELLIGENCE</h2>
 
 <nav>
 <a onclick="go('dashboard')">Dashboard</a>
-<a onclick="go('sales')">Vendite</a>
-<a onclick="go('buys')">Acquisti</a>
-<a onclick="go('stock')">Magazzino</a>
-<a onclick="go('analytics')">Analytics</a>
-<a onclick="go('forecast')">Previsioni</a>
-<a onclick="go('settings')">Grafici</a>
-<a onclick="go('search')">Ricerca</a>
 <a onclick="go('import')">Import</a>
+<a onclick="go('sales')">Vendite</a>
+<a onclick="go('analytics')">Analisi</a>
+<a onclick="go('forecast')">Previsioni</a>
 <a onclick="go('ai')">AI</a>
+<a onclick="go('search')">Ricerca</a>
 <a onclick="go('backup')">Backup</a>
 </nav>
 </header>
@@ -153,122 +150,12 @@ th{color:var(--gold)}
 <div id="dashboard" class="page active">
 
 <div class="card">
-<h3>📊 KPI Avanzati</h3>
+<h3>📊 KPI Business</h3>
 <div class="grid" id="kpi"></div>
 </div>
 
 <div class="card"><canvas id="revChart"></canvas></div>
-<div class="card"><canvas id="cashChart"></canvas></div>
-
-</div>
-
-<!-- SALES -->
-<div id="sales" class="page">
-
-<div class="card">
-<h3>➕ Vendita</h3>
-
-<input id="s_name" placeholder="Nome">
-<input id="s_cat" placeholder="Categoria">
-<input id="s_price" placeholder="Prezzo">
-<input id="s_cost" placeholder="Costo">
-<input id="s_date" type="date">
-
-<button onclick="addSale()">Salva</button>
-</div>
-
-<div class="card"><table id="salesTable"></table></div>
-
-</div>
-
-<!-- BUYS -->
-<div id="buys" class="page">
-
-<div class="card">
-
-<input id="b_name" placeholder="Nome">
-<input id="b_cat" placeholder="Categoria">
-<input id="b_price" placeholder="Prezzo">
-<input id="b_date" type="date">
-
-<button onclick="addBuy()">Salva</button>
-
-</div>
-
-<div class="card"><table id="buysTable"></table></div>
-
-</div>
-
-<!-- STOCK -->
-<div id="stock" class="page">
-
-<div class="card"><table id="stockTable"></table></div>
-
-</div>
-
-<!-- ANALYTICS -->
-<div id="analytics" class="page">
-
 <div class="card"><canvas id="profitChart"></canvas></div>
-<div class="card"><canvas id="roiChart"></canvas></div>
-<div class="card"><canvas id="catChart"></canvas></div>
-<div class="card"><canvas id="rotChart"></canvas></div>
-
-</div>
-
-<!-- FORECAST -->
-<div id="forecast" class="page">
-
-<div class="card">
-
-<button onclick="forecast()">Calcola</button>
-
-<div id="forecastRes"></div>
-
-</div>
-
-</div>
-
-<!-- SETTINGS -->
-<div id="settings" class="page">
-
-<div class="card">
-
-<h3>🎨 Impostazioni Grafici</h3>
-
-<select id="chartType">
-<option>line</option>
-<option>bar</option>
-<option>pie</option>
-<option>doughnut</option>
-</select>
-
-<input type="color" id="chartColor" value="#d4af37">
-
-<button onclick="applySettings()">Applica</button>
-
-</div>
-
-</div>
-
-<!-- SEARCH -->
-<div id="search" class="page">
-
-<div class="card">
-
-<input id="searchTxt" placeholder="Cerca...">
-
-<button onclick="searchItem()">Cerca</button>
-
-<div id="searchRes"></div>
-
-<hr>
-
-<input type="file" id="imgFile">
-
-<button onclick="lens()">Google Lens</button>
-
-</div>
 
 </div>
 
@@ -277,11 +164,49 @@ th{color:var(--gold)}
 
 <div class="card">
 
-<input type="file" id="fileInput" accept=".csv">
+<h3>📂 Import Universale</h3>
+
+<input type="file" id="fileInput">
 
 <button onclick="importFile()">Analizza File</button>
 
 <div id="importRes"></div>
+
+</div>
+
+</div>
+
+<!-- SALES -->
+<div id="sales" class="page">
+
+<div class="card">
+
+<h3>📁 Dati Importati</h3>
+
+<table id="salesTable"></table>
+
+</div>
+
+</div>
+
+<!-- ANALYTICS -->
+<div id="analytics" class="page">
+
+<div class="card"><canvas id="roiChart"></canvas></div>
+<div class="card"><canvas id="catChart"></canvas></div>
+<div class="card"><canvas id="epocaChart"></canvas></div>
+<div class="card"><canvas id="channelChart"></canvas></div>
+
+</div>
+
+<!-- FORECAST -->
+<div id="forecast" class="page">
+
+<div class="card">
+
+<button onclick="forecast()">Previsione AI</button>
+
+<div id="forecastRes"></div>
 
 </div>
 
@@ -302,12 +227,33 @@ th{color:var(--gold)}
 
 </div>
 
+<!-- SEARCH -->
+<div id="search" class="page">
+
+<div class="card">
+
+<input id="searchTxt" placeholder="Cerca oggetto">
+
+<button onclick="searchItem()">Cerca</button>
+
+<div id="searchRes"></div>
+
+<hr>
+
+<input type="file" id="imgFile">
+
+<button onclick="lens()">Google Lens</button>
+
+</div>
+
+</div>
+
 <!-- BACKUP -->
 <div id="backup" class="page">
 
 <div class="card">
 
-<button onclick="exportData()">Backup</button>
+<button onclick="exportData()">Scarica Backup</button>
 
 </div>
 
@@ -319,11 +265,7 @@ th{color:var(--gold)}
 
 /* DB */
 
-let sales=JSON.parse(localStorage.getItem("sales")||"[]");
-let buys=JSON.parse(localStorage.getItem("buys")||"[]");
-
-let chartType="line";
-let chartColor="#d4af37";
+let data=[];
 
 let charts={};
 
@@ -337,107 +279,147 @@ function go(p){
 /* SAVE */
 
 function save(){
- localStorage.setItem("sales",JSON.stringify(sales));
- localStorage.setItem("buys",JSON.stringify(buys));
+ localStorage.setItem("antiquariumData",JSON.stringify(data));
 }
 
-/* ADD */
-
-function addSale(){
-
- if(!s_name.value||!s_price.value)return;
-
- sales.push({
-  name:s_name.value,
-  cat:s_cat.value,
-  price:+s_price.value,
-  cost:+s_cost.value,
-  date:s_date.value
- });
-
- save(); clear(); render();
+function load(){
+ data=JSON.parse(localStorage.getItem("antiquariumData")||"[]");
 }
 
-function addBuy(){
+/* IMPORT */
 
- if(!b_name.value||!b_price.value)return;
+function importFile(){
 
- buys.push({
-  name:b_name.value,
-  cat:b_cat.value,
-  price:+b_price.value,
-  date:b_date.value
- });
+ let file=fileInput.files[0];
 
- save(); clear(); render();
+ if(!file){
+  alert("Seleziona un file");
+  return;
+ }
+
+ let reader=new FileReader();
+
+ reader.onload=function(e){
+
+  let txt=e.target.result;
+
+  let sep=",";
+
+  if(txt.includes(";")) sep=";";
+  else if(txt.includes("\t")) sep="\t";
+
+  Papa.parse(txt,{
+   header:true,
+   delimiter:sep,
+   skipEmptyLines:true,
+
+   complete:r=>{
+
+    data=[];
+
+    r.data.forEach(row=>{
+
+     function g(k){
+      return row[k]||row[k?.toLowerCase()]||"";
+     }
+
+     function num(v){
+      return Number(
+       String(v)
+       .replace("€","")
+       .replace("%","")
+       .replace(",",".")
+       .replace(/\s/g,"")
+      )||0;
+     }
+
+     data.push({
+
+      name: g("Merce venduta"),
+      tipo: g("TIPOLOGIA"),
+      luogoVend: g("luogo di vendita"),
+      luogoAcq: g("luogo acquisto"),
+      epoca: g("epoca"),
+
+      mese: g("MeseNorm"),
+
+      prezzo: num(g("prezzo di vendita")),
+      costo: num(g("acquisto")),
+
+      profitto: num(g("profitto")),
+      margine: num(g("margine %")),
+
+      canale: (
+       g("proffitto negozio")?"Negozio":
+       g("profitto proantic")?"Proantic":
+       g("profitto antictore")?"Antictore":
+       g("proffitto 1stdibs")?"1stdibs":
+       g("proffitto instagram")?"Instagram":
+       g("proffitto tuttoantico")?"TuttoAntico":"Altro"
+      )
+
+     });
+
+    });
+
+    save();
+    render();
+
+    importRes.innerHTML=`✔️ ${data.length} record caricati`;
+
+   }
+
+  });
+
+ };
+
+ reader.readAsText(file,"UTF-8");
 }
 
-function clear(){
-
- [s_name,s_cat,s_price,s_cost,s_date,
-  b_name,b_cat,b_price,b_date]
- .forEach(x=>x.value="");
-}
-
-/* MAIN */
+/* RENDER */
 
 function render(){
 
- renderTables();
+ renderTable();
  renderKPI();
  renderCharts();
  renderAI();
 }
 
-/* TABLES */
+/* TABLE */
 
-function renderTables(){
+function renderTable(){
 
- let s="<tr><th>Nome</th><th>Cat</th><th>Prezzo</th><th>Profitto</th></tr>";
+ let h="<tr><th>Nome</th><th>Tipo</th><th>Prezzo</th><th>Profitto</th><th>Epoca</th></tr>";
 
- sales.forEach(x=>{
-  s+=`<tr><td>${x.name}</td><td>${x.cat}</td><td>${x.price}</td><td>${x.price-x.cost}</td></tr>`;
+ data.forEach(x=>{
+  h+=`
+  <tr>
+  <td>${x.name}</td>
+  <td>${x.tipo}</td>
+  <td>${x.prezzo}</td>
+  <td>${x.profitto}</td>
+  <td>${x.epoca}</td>
+  </tr>`;
  });
 
- salesTable.innerHTML=s;
-
- let b="<tr><th>Nome</th><th>Cat</th><th>Prezzo</th></tr>";
-
- buys.forEach(x=>{
-  b+=`<tr><td>${x.name}</td><td>${x.cat}</td><td>${x.price}</td></tr>`;
- });
-
- buysTable.innerHTML=b;
-
- let sold=sales.map(x=>x.name);
-
- let st="<tr><th>Nome</th><th>Cat</th><th>Stato</th></tr>";
-
- buys.forEach(x=>{
-  st+=`<tr><td>${x.name}</td><td>${x.cat}</td><td>${sold.includes(x.name)?"Venduto":"Stock"}</td></tr>`;
- });
-
- stockTable.innerHTML=st;
+ salesTable.innerHTML=h;
 }
 
 /* KPI */
 
 function renderKPI(){
 
- let rev=sum(sales,"price");
- let cost=sum(buys,"price");
- let prof=rev-cost;
-
- let roi=(prof/cost*100)||0;
+ let rev=sum("prezzo");
+ let prof=sum("profitto");
+ let avg=prof/(data.length||1);
 
  kpi.innerHTML=`
 
- <div class="kpi"><b>${rev}</b><br>Entrate</div>
- <div class="kpi"><b>${cost}</b><br>Uscite</div>
- <div class="kpi"><b>${prof}</b><br>Utile</div>
- <div class="kpi"><b>${roi.toFixed(1)}%</b><br>ROI</div>
- <div class="kpi"><b>${sales.length}</b><br>Vendite</div>
- <div class="kpi"><b>${buys.length}</b><br>Acquisti</div>
+ <div class="kpi"><b>${rev}</b><br>Ricavi</div>
+ <div class="kpi"><b>${prof}</b><br>Profitto</div>
+ <div class="kpi"><b>${avg.toFixed(0)}</b><br>Media</div>
+ <div class="kpi"><b>${data.length}</b><br>Record</div>
 
  `;
 }
@@ -446,56 +428,49 @@ function renderKPI(){
 
 function renderCharts(){
 
- let month={};
- let cash={};
- let cat={};
- let rot={};
+ let byMonth=group("mese","prezzo");
+ let byCat=group("tipo","prezzo");
+ let byEpoca=group("epoca","profitto");
+ let byChannel=group("canale","profitto");
 
- sales.forEach(s=>{
+ draw("revChart","Ricavi per Mese",byMonth,"line");
+ draw("profitChart","Profitto",byMonth,"bar");
 
-  let m=s.date?.slice(0,7);
+ draw("roiChart","ROI per Tipo",byCat,"doughnut");
+ draw("catChart","Categorie",byCat,"pie");
 
-  if(m){
-   month[m]=(month[m]||0)+s.price;
-   cash[m]=(cash[m]||0)+(s.price-s.cost);
-  }
-
-  cat[s.cat]=(cat[s.cat]||0)+s.price;
-
-  rot[s.name]=(rot[s.name]||0)+1;
- });
-
- draw("revChart","Ricavi",month);
- draw("cashChart","Cashflow",cash);
- draw("profitChart","Profitto",objMap(s=>s.price-s.cost));
- draw("roiChart","ROI %",objMap(s=>((s.price-s.cost)/s.cost*100)||0));
- draw("catChart","Categorie",cat);
- draw("rotChart","Rotazione",rot);
+ draw("epocaChart","Epoche",byEpoca,"bar");
+ draw("channelChart","Canali",byChannel,"pie");
 }
 
-function draw(id,label,obj){
+function draw(id,label,obj,type){
 
  if(charts[id]) charts[id].destroy();
 
  charts[id]=new Chart(document.getElementById(id),{
-  type:chartType,
+  type,
   data:{
    labels:Object.keys(obj),
    datasets:[{
     label,
     data:Object.values(obj),
-    backgroundColor:chartColor,
-    borderColor:chartColor
+    backgroundColor:"#d4af37",
+    borderColor:"#d4af37"
    }]
   }
  });
 }
 
-function objMap(fn){
+/* GROUP */
+
+function group(k,v){
 
  let o={};
 
- sales.forEach(x=>o[x.name]=fn(x));
+ data.forEach(x=>{
+  if(x[k])
+   o[x[k]]=(o[x[k]]||0)+x[v];
+ });
 
  return o;
 }
@@ -504,24 +479,46 @@ function objMap(fn){
 
 function forecast(){
 
- let avg=sum(sales,"price")/(sales.length||1);
+ let avg=sum("prezzo")/(data.length||1);
 
- let next=avg*1.2;
+ let next=avg*1.25;
 
  forecastRes.innerHTML=`
- Previsto: <b>${next.toFixed(0)}€</b><br>
- Trend: +20%
+ Previsto prossimo periodo: <b>${next.toFixed(0)}€</b>
  `;
 }
 
-/* SETTINGS */
+/* AI */
 
-function applySettings(){
+function renderAI(){
 
- chartType=chartType.value;
- chartColor=chartColor.value;
+ let prof=sum("profitto");
 
- renderCharts();
+ let t="Sistema stabile.";
+
+ if(prof<0) t="⚠️ Stai perdendo.";
+ if(prof>0) t="✅ Crescita positiva.";
+
+ chat.innerHTML=`<div class="ai">${t}</div>`;
+}
+
+function ask(){
+
+ let v=q.value;
+
+ chat.innerHTML+=`<div class="user">${v}</div>`;
+
+ let r="Strategia: investi in epoche forti.";
+
+ if(v.includes("perdo")) r="Riduci costi.";
+ if(v.includes("canale")) r="Punta su 1stdibs.";
+
+ setTimeout(()=>{
+  chat.innerHTML+=`<div class="ai">${r}</div>`;
+  chat.scrollTop=9999;
+ },300);
+
+ q.value="";
 }
 
 /* SEARCH */
@@ -530,11 +527,11 @@ function searchItem(){
 
  let t=searchTxt.value.toLowerCase();
 
- let r=sales.filter(x=>x.name.toLowerCase().includes(t));
+ let r=data.filter(x=>x.name.toLowerCase().includes(t));
 
  let h="<ul>";
 
- r.forEach(x=>h+=`<li>${x.name} — ${x.price}€</li>`);
+ r.forEach(x=>h+=`<li>${x.name} — ${x.prezzo}€</li>`);
 
  searchRes.innerHTML=h+"</ul>";
 }
@@ -548,107 +545,28 @@ function lens(){
  window.open("https://lens.google.com/upload","_blank");
 }
 
-/* IMPORT */
-
-function importFile(){
-
- let f=fileInput.files[0];
-
- if(!f)return alert("Seleziona CSV");
-
- Papa.parse(f,{
-  header:true,
-  skipEmptyLines:true,
-  complete:r=>{
-
-   let c=0;
-
-   r.data.forEach(x=>{
-
-    let n=x.nome||x.Nome||x.prodotto||x.articolo;
-    let p=x.prezzo||x.importo||x.totale;
-    let co=x.costo||0;
-    let d=x.data||"";
-
-    if(n&&p){
-
-     sales.push({
-      name:n,
-      cat:"Import",
-      price:+p,
-      cost:+co,
-      date:d
-     });
-
-     c++;
-    }
-   });
-
-   save();
-   render();
-
-   importRes.innerHTML=`✔️ ${c} record analizzati`;
-  }
- });
-}
-
-/* AI */
-
-function renderAI(){
-
- let rev=sum(sales,"price");
- let cost=sum(buys,"price");
-
- let t="Sistema stabile.";
-
- if(cost>rev) t="⚠️ Uscite troppo alte.";
- if(rev>cost) t="✅ Crescita positiva.";
-
- chat.innerHTML=`<div class="ai">${t}</div>`;
-}
-
-function ask(){
-
- let v=q.value;
-
- chat.innerHTML+=`<div class="user">${v}</div>`;
-
- let r="Strategia: punta su opere certificate.";
-
- if(v.includes("invest")) r="Compra nei mesi deboli.";
- if(v.includes("perdo")) r="Riduci costi.";
-
- setTimeout(()=>{
-  chat.innerHTML+=`<div class="ai">${r}</div>`;
-  chat.scrollTop=9999;
- },300);
-
- q.value="";
-}
-
 /* BACKUP */
 
 function exportData(){
-
- let data={sales,buys};
 
  let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
 
  let a=document.createElement("a");
 
  a.href=URL.createObjectURL(blob);
- a.download="backup_ultimate.json";
+ a.download="antiquarium_backup.json";
  a.click();
 }
 
-/* TOOLS */
+/* UTILS */
 
-function sum(a,f){
- return a.reduce((x,y)=>x+y[f],0);
+function sum(k){
+ return data.reduce((a,b)=>a+(b[k]||0),0);
 }
 
 /* INIT */
 
+load();
 render();
 
 </script>

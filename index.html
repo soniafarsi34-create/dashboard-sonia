@@ -2,62 +2,69 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Sonia Intelligence</title>
+<title>Antiquarium Pro — Sonia</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
 
-/* ===== THEME ===== */
+/* ===== LUXURY THEME ===== */
 
 :root{
- --main:#0071e3;
- --bg:#f5f7fb;
- --card:#ffffff;
- --dark:#1d1d1f;
+ --bg:#0b0d11;
+ --card:#12151c;
+ --gold:#c9a24d;
+ --txt:#e6e6e6;
+ --soft:#888;
 }
 
 body{
  margin:0;
- font-family:Poppins, sans-serif;
  background:var(--bg);
- color:var(--dark);
+ font-family:Inter,sans-serif;
+ color:var(--txt);
 }
 
 
 /* ===== HEADER ===== */
 
 header{
- background:white;
- padding:15px 25px;
  display:flex;
  justify-content:space-between;
  align-items:center;
- box-shadow:0 2px 10px rgba(0,0,0,.05);
- position:sticky;
- top:0;
- z-index:10;
+ padding:18px 30px;
+ background:#0f1218;
+ border-bottom:1px solid #222;
+}
+
+header h2{
+ margin:0;
+ font-weight:600;
+ letter-spacing:1px;
+ color:var(--gold);
 }
 
 nav a{
- margin:0 12px;
+ color:var(--txt);
+ margin-left:20px;
  text-decoration:none;
- color:#333;
- font-weight:500;
+ font-size:14px;
 }
 
-nav a:hover{color:var(--main)}
+nav a:hover{
+ color:var(--gold);
+}
 
 
 /* ===== LAYOUT ===== */
 
 .container{
- max-width:1000px;
+ max-width:1100px;
  margin:auto;
- padding:20px;
+ padding:25px;
 }
 
 .page{display:none}
@@ -65,40 +72,62 @@ nav a:hover{color:var(--main)}
 
 .card{
  background:var(--card);
- border-radius:16px;
- padding:20px;
- margin-bottom:20px;
- box-shadow:0 10px 25px rgba(0,0,0,.05);
+ border-radius:18px;
+ padding:25px;
+ margin-bottom:25px;
+ border:1px solid #1c1f27;
+ box-shadow:0 0 40px rgba(0,0,0,.4);
 }
 
+h3{
+ margin-top:0;
+ font-weight:500;
+ letter-spacing:.5px;
+ color:var(--gold);
+}
+
+
+/* ===== UI ===== */
+
 button{
- background:var(--main);
- color:white;
+ background:var(--gold);
+ color:black;
  border:none;
  padding:12px 18px;
  border-radius:10px;
+ font-weight:600;
  cursor:pointer;
 }
 
-input,textarea{
+button:hover{opacity:.9}
+
+input,textarea,select{
  width:100%;
+ background:#0f1218;
+ border:1px solid #222;
+ color:var(--txt);
  padding:10px;
- margin:8px 0;
  border-radius:8px;
- border:1px solid #ddd;
+ margin:6px 0;
 }
 
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
  gap:15px;
 }
 
 .kpi{
- background:#f1f4ff;
+ background:#0f1218;
+ border:1px solid #222;
+ border-radius:14px;
  padding:15px;
- border-radius:12px;
  text-align:center;
+}
+
+.kpi b{
+ font-size:22px;
+ color:var(--gold);
 }
 
 
@@ -107,20 +136,23 @@ input,textarea{
 .chat{
  height:220px;
  overflow:auto;
- background:#fafafa;
+ background:#0f1218;
+ border:1px solid #222;
  border-radius:10px;
  padding:10px;
- border:1px solid #eee;
 }
 
-.user{color:var(--main)}
-.ai{color:#333}
+.user{color:var(--gold)}
+.ai{color:var(--txt)}
+
+
+/* ===== FOOTER ===== */
 
 footer{
  text-align:center;
+ color:#555;
  padding:20px;
- color:#777;
- font-size:13px;
+ font-size:12px;
 }
 
 </style>
@@ -128,18 +160,18 @@ footer{
 
 <body>
 
-<!-- ===== HEADER ===== -->
 
 <header>
 
-<h3>🍏 Sonia Intelligence</h3>
+<h2>ANTIQUARIUM PRO</h2>
 
 <nav>
  <a onclick="go('home')">Home</a>
- <a onclick="go('dashboard')">Dashboard</a>
- <a onclick="go('shop')">Shop AI</a>
- <a onclick="go('vision')">Image AI</a>
- <a onclick="go('chat')">Advisor</a>
+ <a onclick="go('sales')">Vendite</a>
+ <a onclick="go('pricing')">Prezzi</a>
+ <a onclick="go('stock')">Magazzino</a>
+ <a onclick="go('market')">Mercato</a>
+ <a onclick="go('advisor')">Advisor</a>
 </nav>
 
 </header>
@@ -147,99 +179,145 @@ footer{
 
 <div class="container">
 
+
 <!-- ================= HOME ================= -->
 
 <div id="home" class="page active">
 
 <div class="card">
-<h2>✨ Welcome Sonia</h2>
+
+<h3>Private Art Intelligence System</h3>
 
 <p>
-Sistema intelligente per <b>shop.tuttoantico.it</b><br>
-Analisi • Strategia • AI • Crescita
+Dashboard professionale per antiquari.<br>
+Analisi • Prezzi • Mercato • Strategia
 </p>
 
-<button onclick="go('dashboard')">Vai alla Dashboard</button>
-</div>
+<button onclick="go('sales')">Apri Dashboard</button>
 
 </div>
 
+</div>
 
-<!-- ================= DASHBOARD ================= -->
 
-<div id="dashboard" class="page">
+<!-- ================= SALES ================= -->
+
+<div id="sales" class="page">
 
 <div class="card">
-<h3>📂 Carica Dati Vendite</h3>
+
+<h3>📂 Importa Vendite</h3>
+
 <input type="file" id="file">
-<button onclick="load()">Analizza</button>
+
+<button onclick="load()">Analizza Dati</button>
+
 </div>
 
+
 <div class="card">
-<h3>📊 KPI</h3>
+
+<h3>📊 Indicatori Principali</h3>
+
 <div class="grid" id="kpi"></div>
+
 </div>
 
+
 <div class="card">
-<h3>📈 Canali</h3>
+
+<h3>📈 Canali di Vendita</h3>
+
 <canvas id="channels"></canvas>
+
 </div>
 
+
 <div class="card">
-<h3>🧠 AI Insights</h3>
+
+<h3>🧠 Diagnosi AI</h3>
+
 <div id="ai"></div>
-</div>
 
-</div>
-
-
-<!-- ================= SHOP ================= -->
-
-<div id="shop" class="page">
-
-<div class="card">
-<h3>🛍️ Analisi Shop</h3>
-
-<p>Inserisci nome prodotto dal tuo sito:</p>
-
-<input id="prod" placeholder="Es. Mobile antico">
-
-<button onclick="shopAI()">Analizza Prodotto</button>
-
-<div id="shopResult"></div>
 </div>
 
 </div>
 
 
-<!-- ================= VISION ================= -->
+<!-- ================= PRICING ================= -->
 
-<div id="vision" class="page">
-
-<div class="card">
-<h3>🖼️ Image Intelligence</h3>
-
-<p>Carica foto prodotto → Cerca online</p>
-
-<input type="file" id="img">
-
-<button onclick="lens()">Cerca Simili</button>
-
-<div id="lensResult"></div>
-</div>
-
-</div>
-
-
-<!-- ================= CHAT ================= -->
-
-<div id="chat" class="page">
+<div id="pricing" class="page">
 
 <div class="card">
 
-<h3>💬 Business Advisor AI</h3>
+<h3>💰 Calcolo Prezzo Ideale</h3>
 
-<div class="chat" id="chatbox"></div>
+<label>Costo Acquisto</label>
+<input id="cost">
+
+<label>Restauro / Spese</label>
+<input id="extra">
+
+<label>Rarità (1–5)</label>
+<select id="rarity">
+<option>1</option><option>2</option><option>3</option>
+<option>4</option><option>5</option>
+</select>
+
+<button onclick="priceAI()">Calcola</button>
+
+<div id="priceResult"></div>
+
+</div>
+
+</div>
+
+
+<!-- ================= STOCK ================= -->
+
+<div id="stock" class="page">
+
+<div class="card">
+
+<h3>📦 Magazzino</h3>
+
+<button onclick="stockAI()">Analizza Inventario</button>
+
+<div id="stockResult"></div>
+
+</div>
+
+</div>
+
+
+<!-- ================= MARKET ================= -->
+
+<div id="market" class="page">
+
+<div class="card">
+
+<h3>🌍 Analisi Mercato</h3>
+
+<input id="search" placeholder="Es. Natura morta fiamminga">
+
+<button onclick="marketAI()">Cerca</button>
+
+<div id="marketResult"></div>
+
+</div>
+
+</div>
+
+
+<!-- ================= ADVISOR ================= -->
+
+<div id="advisor" class="page">
+
+<div class="card">
+
+<h3>💬 Private Advisor</h3>
+
+<div class="chat" id="chat"></div>
 
 <input id="q" placeholder="Chiedi una strategia...">
 
@@ -249,12 +327,14 @@ Analisi • Strategia • AI • Crescita
 
 </div>
 
+
 </div>
 
 
 <footer>
-© 2026 Sonia Intelligence System
+© 2026 Antiquarium Pro — Sonia Farsi
 </footer>
+
 
 
 <script>
@@ -263,7 +343,7 @@ let data=[];
 let stats={};
 
 
-// ========== NAV ==========
+// ===== NAV =====
 
 function go(p){
 
@@ -274,7 +354,7 @@ function go(p){
 }
 
 
-// ========== LOAD FILE ==========
+// ===== LOAD =====
 
 function load(){
 
@@ -296,7 +376,7 @@ r.readAsBinaryString(f);
 }
 
 
-// ========== ANALYSIS ==========
+// ===== ANALYSIS =====
 
 function analyze(){
 
@@ -321,10 +401,11 @@ stats={tot,prof,ch};
 kpi();
 chart();
 ai();
+
 }
 
 
-// ========== KPI ==========
+// ===== KPI =====
 
 function kpi(){
 
@@ -332,19 +413,19 @@ let m=(stats.prof/stats.tot*100)||0;
 
 document.getElementById("kpi").innerHTML=`
 
-<div class="kpi">💶<br><b>${stats.tot.toFixed(0)}€</b></div>
+<div class="kpi"><b>${stats.tot.toFixed(0)}€</b><br>Vendite</div>
 
-<div class="kpi">📈<br><b>${stats.prof.toFixed(0)}€</b></div>
+<div class="kpi"><b>${stats.prof.toFixed(0)}€</b><br>Profitto</div>
 
-<div class="kpi">📊<br><b>${m.toFixed(1)}%</b></div>
+<div class="kpi"><b>${m.toFixed(1)}%</b><br>Margine</div>
 
-<div class="kpi">🚀<br><b>${stats.tot>50000?"PRO":"START"}</b></div>
+<div class="kpi"><b>${stats.tot>80000?"ELITE":"GROW"}</b><br>Status</div>
 
 `;
 }
 
 
-// ========== CHART ==========
+// ===== CHART =====
 
 function chart(){
 
@@ -359,14 +440,14 @@ ctx.chart=new Chart(ctx,{
   datasets:[{
    label:"Canali",
    data:Object.values(stats.ch),
-   backgroundColor:"#0071e3"
+   backgroundColor:"#c9a24d"
   }]
  }
 });
 }
 
 
-// ========== AI ==========
+// ===== AI =====
 
 function ai(){
 
@@ -374,75 +455,97 @@ let best=max(stats.ch);
 
 let t=`
 
-🔥 Miglior canale: <b>${best}</b><br>
-💡 Consiglio: investi qui<br>
+🔥 Dominante: <b>${best}</b><br>
+📌 Priorità: rafforza questo canale<br>
 
-📌 Aumenta margini del 5–10%
+💡 Aumenta margine del 7%
 
 `;
 
 if(stats.prof/stats.tot<0.3){
- t+="<br>⚠️ Margine basso";
+ t+="<br>⚠️ Margine critico";
 }
 
 document.getElementById("ai").innerHTML=t;
 }
 
 
-// ========== SHOP AI ==========
+// ===== PRICING AI =====
 
-function shopAI(){
+function priceAI(){
 
-let p=document.getElementById("prod").value;
+let c=+cost.value||0;
+let e=+extra.value||0;
+let r=+rarity.value;
 
-if(!p)return;
+let base=(c+e)*1.8;
 
-let url="https://www.google.com/search?q="+encodeURIComponent(p+" sito:tuttoantico.it");
+let mult=1+(r*0.25);
 
-document.getElementById("shopResult").innerHTML=`
+let price=base*mult;
 
-🔍 Analisi: <b>${p}</b><br><br>
+document.getElementById("priceResult").innerHTML=`
 
-<a href="${url}" target="_blank">
-📊 Cerca sul tuo shop
-</a><br><br>
+💎 Prezzo suggerito:<br>
+<b style="color:var(--gold)">${price.toFixed(0)} €</b><br><br>
 
-💡 Strategia:
-• Verifica prezzo medio
-• Confronta concorrenti
-• Valuta rarità
+Markup: ${(mult*100-100).toFixed(0)}%
 
 `;
 
 }
 
 
-// ========== IMAGE AI ==========
+// ===== STOCK AI =====
 
-function lens(){
+function stockAI(){
 
-let f=document.getElementById("img").files[0];
+let slow=0,fast=0;
 
-if(!f){alert("Carica immagine");return;}
+data.forEach(r=>{
 
-let url="https://lens.google.com/upload";
+ let p=Number(r["prezzo di vendita"]||0);
 
-document.getElementById("lensResult").innerHTML=`
+ if(p<500) slow++;
+ else fast++;
+});
 
-📸 Apri Google Lens:
+document.getElementById("stockResult").innerHTML=`
 
-<a href="${url}" target="_blank">
-Vai a Lens
-</a><br><br>
+⚡ Rotazione veloce: ${fast}<br>
+🐌 Rotazione lenta: ${slow}<br><br>
 
-Carica la foto → trova prezzo → confronta
+Consiglio: sconta i lenti
 
 `;
 
 }
 
 
-// ========== CHAT ==========
+// ===== MARKET AI =====
+
+function marketAI(){
+
+let q=search.value;
+
+let url="https://www.google.com/search?q="+encodeURIComponent(q+" antiquariato prezzo asta");
+
+document.getElementById("marketResult").innerHTML=`
+
+🔍 Ricerca mercato:<br>
+
+<a href="${url}" target="_blank" style="color:var(--gold)">
+Confronta online
+</a><br><br>
+
+Suggerimento: verifica aste internazionali
+
+`;
+
+}
+
+
+// ===== CHAT AI =====
 
 function ask(){
 
@@ -461,7 +564,7 @@ document.getElementById("q").value="";
 
 function add(u,t,c){
 
-let d=document.getElementById("chatbox");
+let d=document.getElementById("chat");
 
 d.innerHTML+=`<div class="${c}"><b>${u}:</b> ${t}</div>`;
 
@@ -469,31 +572,35 @@ d.scrollTop=d.scrollHeight;
 }
 
 
-// ========== AI LOGIC ==========
+// ===== AI LOGIC =====
 
 function aiChat(q){
 
 if(q.includes("compra")){
- return "Compra pezzi rari e certificati";
+ return "Compra opere certificate e firmate";
 }
 
 if(q.includes("prezzo")){
- return "Aumenta del 5% sui bestseller";
+ return "Markup ideale 70–120%";
 }
 
 if(q.includes("vend")){
  return "Spingi su "+max(stats.ch);
 }
 
+if(q.includes("rischio")){
+ return "Evita opere senza provenienza";
+}
+
 if(q.includes("futuro")){
- return "Trend positivo su antiquariato autentico";
+ return "Crescita su pittura europea 800–900";
 }
 
-return "Strategia: qualità + storytelling";
+return "Focus su qualità + reputazione";
 }
 
 
-// ========== UTILS ==========
+// ===== UTILS =====
 
 function max(o){
  return Object.keys(o).reduce((a,b)=>o[a]>o[b]?a:b);

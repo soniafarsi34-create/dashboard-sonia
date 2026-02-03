@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Antiquarium ULTRA AI — Sonia</title>
+<title>Antiquarium Ultimate AI — Sonia</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800&display=swap" rel="stylesheet">
 
@@ -29,28 +29,23 @@ header{
  padding:18px 25px;
  display:flex;
  justify-content:space-between;
- align-items:center;
+ flex-wrap:wrap;
  border-bottom:1px solid #1b1f2a;
 }
 
 header h2{color:var(--gold)}
 
-nav{
- flex-wrap:wrap;
-}
-
 nav a{
  color:var(--txt);
- margin:5px 12px;
+ margin:5px 10px;
  cursor:pointer;
  font-size:13px;
- display:inline-block;
 }
 
 nav a:hover{color:var(--gold)}
 
 .container{
- max-width:1600px;
+ max-width:1700px;
  margin:auto;
  padding:25px;
 }
@@ -73,26 +68,26 @@ input,select{
  background:#080b12;
  border:1px solid #222;
  color:var(--txt);
- padding:10px;
+ padding:9px;
  border-radius:8px;
- margin:6px 0;
+ margin:5px 0;
 }
 
 button{
  background:var(--gold);
  color:black;
  border:none;
- padding:10px 18px;
- border-radius:10px;
+ padding:9px 16px;
+ border-radius:8px;
  font-weight:700;
  cursor:pointer;
- margin:4px;
+ margin:3px;
 }
 
 table{
  width:100%;
  border-collapse:collapse;
- font-size:14px;
+ font-size:13px;
 }
 
 th,td{
@@ -111,20 +106,20 @@ th{color:var(--gold)}
 .kpi{
  background:#080b12;
  border:1px solid #222;
- border-radius:12px;
- padding:12px;
+ border-radius:10px;
+ padding:10px;
  text-align:center;
 }
 
-.kpi b{color:var(--gold);font-size:20px}
+.kpi b{color:var(--gold);font-size:18px}
 
 .chat{
- height:200px;
+ height:180px;
  overflow:auto;
  background:#080b12;
  border:1px solid #222;
- border-radius:12px;
- padding:10px;
+ border-radius:10px;
+ padding:8px;
 }
 
 .user{color:var(--gold)}
@@ -135,15 +130,16 @@ th{color:var(--gold)}
 <body>
 
 <header>
-<h2>ANTIQUARIUM · ULTRA AI</h2>
+<h2>ANTIQUARIUM · ULTIMATE AI</h2>
 
 <nav>
 <a onclick="go('dashboard')">Dashboard</a>
 <a onclick="go('sales')">Vendite</a>
 <a onclick="go('buys')">Acquisti</a>
 <a onclick="go('stock')">Magazzino</a>
-<a onclick="go('analytics')">Analisi</a>
+<a onclick="go('analytics')">Analytics</a>
 <a onclick="go('forecast')">Previsioni</a>
+<a onclick="go('settings')">Grafici</a>
 <a onclick="go('search')">Ricerca</a>
 <a onclick="go('import')">Import</a>
 <a onclick="go('ai')">AI</a>
@@ -157,17 +153,12 @@ th{color:var(--gold)}
 <div id="dashboard" class="page active">
 
 <div class="card">
-<h3>📊 KPI Business</h3>
+<h3>📊 KPI Avanzati</h3>
 <div class="grid" id="kpi"></div>
 </div>
 
-<div class="card">
-<canvas id="chartRevenue"></canvas>
-</div>
-
-<div class="card">
-<canvas id="chartCash"></canvas>
-</div>
+<div class="card"><canvas id="revChart"></canvas></div>
+<div class="card"><canvas id="cashChart"></canvas></div>
 
 </div>
 
@@ -177,19 +168,16 @@ th{color:var(--gold)}
 <div class="card">
 <h3>➕ Vendita</h3>
 
-<input id="s_name" placeholder="Oggetto">
+<input id="s_name" placeholder="Nome">
 <input id="s_cat" placeholder="Categoria">
 <input id="s_price" placeholder="Prezzo">
 <input id="s_cost" placeholder="Costo">
 <input id="s_date" type="date">
 
 <button onclick="addSale()">Salva</button>
-
 </div>
 
-<div class="card">
-<table id="salesTable"></table>
-</div>
+<div class="card"><table id="salesTable"></table></div>
 
 </div>
 
@@ -197,47 +185,34 @@ th{color:var(--gold)}
 <div id="buys" class="page">
 
 <div class="card">
-<h3>➕ Acquisto</h3>
 
-<input id="b_name">
+<input id="b_name" placeholder="Nome">
 <input id="b_cat" placeholder="Categoria">
-<input id="b_price">
+<input id="b_price" placeholder="Prezzo">
 <input id="b_date" type="date">
 
 <button onclick="addBuy()">Salva</button>
 
 </div>
 
-<div class="card">
-<table id="buysTable"></table>
-</div>
+<div class="card"><table id="buysTable"></table></div>
 
 </div>
 
 <!-- STOCK -->
 <div id="stock" class="page">
 
-<div class="card">
-<h3>📦 Magazzino + Rotazione</h3>
-<table id="stockTable"></table>
-</div>
+<div class="card"><table id="stockTable"></table></div>
 
 </div>
 
 <!-- ANALYTICS -->
 <div id="analytics" class="page">
 
-<div class="card">
-<canvas id="chartProfit"></canvas>
-</div>
-
-<div class="card">
-<canvas id="chartROI"></canvas>
-</div>
-
-<div class="card">
-<canvas id="chartCategory"></canvas>
-</div>
+<div class="card"><canvas id="profitChart"></canvas></div>
+<div class="card"><canvas id="roiChart"></canvas></div>
+<div class="card"><canvas id="catChart"></canvas></div>
+<div class="card"><canvas id="rotChart"></canvas></div>
 
 </div>
 
@@ -245,11 +220,32 @@ th{color:var(--gold)}
 <div id="forecast" class="page">
 
 <div class="card">
-<h3>🔮 Previsioni Avanzate</h3>
 
-<button onclick="makeForecast()">Calcola</button>
+<button onclick="forecast()">Calcola</button>
 
 <div id="forecastRes"></div>
+
+</div>
+
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="page">
+
+<div class="card">
+
+<h3>🎨 Impostazioni Grafici</h3>
+
+<select id="chartType">
+<option>line</option>
+<option>bar</option>
+<option>pie</option>
+<option>doughnut</option>
+</select>
+
+<input type="color" id="chartColor" value="#d4af37">
+
+<button onclick="applySettings()">Applica</button>
 
 </div>
 
@@ -259,9 +255,8 @@ th{color:var(--gold)}
 <div id="search" class="page">
 
 <div class="card">
-<h3>🔍 Ricerca Oggetti</h3>
 
-<input id="searchTxt" placeholder="Cerca nome...">
+<input id="searchTxt" placeholder="Cerca...">
 
 <button onclick="searchItem()">Cerca</button>
 
@@ -269,11 +264,9 @@ th{color:var(--gold)}
 
 <hr>
 
-<h3>📸 Ricerca per Immagine (Google Lens)</h3>
-
 <input type="file" id="imgFile">
 
-<button onclick="lens()">Cerca Online</button>
+<button onclick="lens()">Google Lens</button>
 
 </div>
 
@@ -284,11 +277,9 @@ th{color:var(--gold)}
 
 <div class="card">
 
-<h3>📂 Import CSV</h3>
-
 <input type="file" id="fileInput" accept=".csv">
 
-<button onclick="importFile()">Analizza</button>
+<button onclick="importFile()">Analizza File</button>
 
 <div id="importRes"></div>
 
@@ -300,8 +291,6 @@ th{color:var(--gold)}
 <div id="ai" class="page">
 
 <div class="card">
-
-<h3>🤖 AI Advisor</h3>
 
 <div class="chat" id="chat"></div>
 
@@ -318,9 +307,7 @@ th{color:var(--gold)}
 
 <div class="card">
 
-<h3>💾 Backup</h3>
-
-<button onclick="exportData()">Scarica</button>
+<button onclick="exportData()">Backup</button>
 
 </div>
 
@@ -335,7 +322,10 @@ th{color:var(--gold)}
 let sales=JSON.parse(localStorage.getItem("sales")||"[]");
 let buys=JSON.parse(localStorage.getItem("buys")||"[]");
 
-let chartRevenue,chartCash,chartProfit,chartROI,chartCategory;
+let chartType="line";
+let chartColor="#d4af37";
+
+let charts={};
 
 /* NAV */
 
@@ -384,103 +374,70 @@ function addBuy(){
 
 function clear(){
 
- s_name.value="";
- s_cat.value="";
- s_price.value="";
- s_cost.value="";
- s_date.value="";
-
- b_name.value="";
- b_cat.value="";
- b_price.value="";
- b_date.value="";
+ [s_name,s_cat,s_price,s_cost,s_date,
+  b_name,b_cat,b_price,b_date]
+ .forEach(x=>x.value="");
 }
 
-/* RENDER */
+/* MAIN */
 
 function render(){
 
- renderSales();
- renderBuys();
- renderStock();
+ renderTables();
  renderKPI();
  renderCharts();
  renderAI();
 }
 
-function renderSales(){
+/* TABLES */
 
- let h="<tr><th>Nome</th><th>Cat</th><th>Prezzo</th><th>Costo</th><th>Profitto</th></tr>";
+function renderTables(){
 
- sales.forEach(s=>{
-  h+=`
-  <tr>
-  <td>${s.name}</td>
-  <td>${s.cat}</td>
-  <td>${s.price}</td>
-  <td>${s.cost}</td>
-  <td>${s.price-s.cost}</td>
-  </tr>`;
+ let s="<tr><th>Nome</th><th>Cat</th><th>Prezzo</th><th>Profitto</th></tr>";
+
+ sales.forEach(x=>{
+  s+=`<tr><td>${x.name}</td><td>${x.cat}</td><td>${x.price}</td><td>${x.price-x.cost}</td></tr>`;
  });
 
- salesTable.innerHTML=h;
-}
+ salesTable.innerHTML=s;
 
-function renderBuys(){
+ let b="<tr><th>Nome</th><th>Cat</th><th>Prezzo</th></tr>";
 
- let h="<tr><th>Nome</th><th>Cat</th><th>Prezzo</th></tr>";
-
- buys.forEach(b=>{
-  h+=`
-  <tr>
-  <td>${b.name}</td>
-  <td>${b.cat}</td>
-  <td>${b.price}</td>
-  </tr>`;
+ buys.forEach(x=>{
+  b+=`<tr><td>${x.name}</td><td>${x.cat}</td><td>${x.price}</td></tr>`;
  });
 
- buysTable.innerHTML=h;
-}
-
-function renderStock(){
+ buysTable.innerHTML=b;
 
  let sold=sales.map(x=>x.name);
 
- let h="<tr><th>Nome</th><th>Cat</th><th>Costo</th><th>Stato</th></tr>";
+ let st="<tr><th>Nome</th><th>Cat</th><th>Stato</th></tr>";
 
- buys.forEach(b=>{
-
-  let st=sold.includes(b.name)?"Venduto":"Stock";
-
-  h+=`
-  <tr>
-  <td>${b.name}</td>
-  <td>${b.cat}</td>
-  <td>${b.price}</td>
-  <td>${st}</td>
-  </tr>`;
+ buys.forEach(x=>{
+  st+=`<tr><td>${x.name}</td><td>${x.cat}</td><td>${sold.includes(x.name)?"Venduto":"Stock"}</td></tr>`;
  });
 
- stockTable.innerHTML=h;
+ stockTable.innerHTML=st;
 }
 
 /* KPI */
 
 function renderKPI(){
 
- let rev=sales.reduce((a,b)=>a+b.price,0);
- let cost=buys.reduce((a,b)=>a+b.price,0);
+ let rev=sum(sales,"price");
+ let cost=sum(buys,"price");
  let prof=rev-cost;
 
- let avg=prof/(sales.length||1);
+ let roi=(prof/cost*100)||0;
 
  kpi.innerHTML=`
 
  <div class="kpi"><b>${rev}</b><br>Entrate</div>
  <div class="kpi"><b>${cost}</b><br>Uscite</div>
  <div class="kpi"><b>${prof}</b><br>Utile</div>
- <div class="kpi"><b>${avg.toFixed(0)}</b><br>Media</div>
+ <div class="kpi"><b>${roi.toFixed(1)}%</b><br>ROI</div>
  <div class="kpi"><b>${sales.length}</b><br>Vendite</div>
+ <div class="kpi"><b>${buys.length}</b><br>Acquisti</div>
 
  `;
 }
@@ -489,81 +446,82 @@ function renderKPI(){
 
 function renderCharts(){
 
- let m={};
+ let month={};
  let cash={};
-
- sales.forEach(s=>{
-  let k=s.date?.slice(0,7);
-  if(k){
-   m[k]=(m[k]||0)+s.price;
-   cash[k]=(cash[k]||0)+(s.price-s.cost);
-  }
- });
-
- draw(chartRevenue,"line","Ricavi",m);
- draw(chartCash,"bar","Cashflow",cash);
-
- // ROI
- let roi=sales.map(s=>((s.price-s.cost)/s.cost*100)||0);
-
- draw(chartROI,"bar","ROI %",objFrom(sales.map(x=>x.name),roi));
-
- // Category
  let cat={};
+ let rot={};
 
  sales.forEach(s=>{
+
+  let m=s.date?.slice(0,7);
+
+  if(m){
+   month[m]=(month[m]||0)+s.price;
+   cash[m]=(cash[m]||0)+(s.price-s.cost);
+  }
+
   cat[s.cat]=(cat[s.cat]||0)+s.price;
+
+  rot[s.name]=(rot[s.name]||0)+1;
  });
 
- draw(chartCategory,"pie","Categorie",cat);
-
- // Profit
- let prof=sales.map(s=>s.price-s.cost);
-
- draw(chartProfit,"line","Profitto",objFrom(sales.map(x=>x.name),prof));
+ draw("revChart","Ricavi",month);
+ draw("cashChart","Cashflow",cash);
+ draw("profitChart","Profitto",objMap(s=>s.price-s.cost));
+ draw("roiChart","ROI %",objMap(s=>((s.price-s.cost)/s.cost*100)||0));
+ draw("catChart","Categorie",cat);
+ draw("rotChart","Rotazione",rot);
 }
 
-function draw(ref,type,label,obj){
+function draw(id,label,obj){
 
- if(ref) ref.destroy();
+ if(charts[id]) charts[id].destroy();
 
- let ctx=document.getElementById(label.includes("Ricavi")?"chartRevenue":
- label.includes("Cash")?"chartCash":
- label.includes("ROI")?"chartROI":
- label.includes("Categorie")?"chartCategory":"chartProfit");
-
- ref=new Chart(ctx,{
-  type,
+ charts[id]=new Chart(document.getElementById(id),{
+  type:chartType,
   data:{
    labels:Object.keys(obj),
    datasets:[{
     label,
     data:Object.values(obj),
-    backgroundColor:"#d4af37",
-    borderColor:"#d4af37"
+    backgroundColor:chartColor,
+    borderColor:chartColor
    }]
   }
  });
 }
 
-function objFrom(k,v){
+function objMap(fn){
+
  let o={};
- k.forEach((x,i)=>o[x]=v[i]);
+
+ sales.forEach(x=>o[x.name]=fn(x));
+
  return o;
 }
 
 /* FORECAST */
 
-function makeForecast(){
+function forecast(){
 
- let avg=sales.reduce((a,b)=>a+b.price,0)/(sales.length||1);
+ let avg=sum(sales,"price")/(sales.length||1);
 
- let trend=avg*1.18;
+ let next=avg*1.2;
 
  forecastRes.innerHTML=`
- Prossimo mese: <b>${trend.toFixed(0)}€</b><br>
- Crescita stimata: +18%
+ Previsto: <b>${next.toFixed(0)}€</b><br>
+ Trend: +20%
  `;
+}
+
+/* SETTINGS */
+
+function applySettings(){
+
+ chartType=chartType.value;
+ chartColor=chartColor.value;
+
+ renderCharts();
 }
 
 /* SEARCH */
@@ -572,39 +530,33 @@ function searchItem(){
 
  let t=searchTxt.value.toLowerCase();
 
- let r=sales.filter(s=>s.name.toLowerCase().includes(t));
+ let r=sales.filter(x=>x.name.toLowerCase().includes(t));
 
  let h="<ul>";
 
  r.forEach(x=>h+=`<li>${x.name} — ${x.price}€</li>`);
 
- h+="</ul>";
-
- searchRes.innerHTML=h;
+ searchRes.innerHTML=h+"</ul>";
 }
 
-/* GOOGLE LENS */
+/* LENS */
 
 function lens(){
 
- let f=imgFile.files[0];
+ if(!imgFile.files[0]) return alert("Carica immagine");
 
- if(!f) return alert("Carica un'immagine");
-
- let url="https://lens.google.com/upload";
-
- window.open(url,"_blank");
+ window.open("https://lens.google.com/upload","_blank");
 }
 
 /* IMPORT */
 
 function importFile(){
 
- let file=fileInput.files[0];
+ let f=fileInput.files[0];
 
- if(!file) return alert("Seleziona CSV");
+ if(!f)return alert("Seleziona CSV");
 
- Papa.parse(file,{
+ Papa.parse(f,{
   header:true,
   skipEmptyLines:true,
   complete:r=>{
@@ -635,7 +587,7 @@ function importFile(){
    save();
    render();
 
-   importRes.innerHTML=`✔️ ${c} record importati`;
+   importRes.innerHTML=`✔️ ${c} record analizzati`;
   }
  });
 }
@@ -644,12 +596,12 @@ function importFile(){
 
 function renderAI(){
 
- let rev=sales.reduce((a,b)=>a+b.price,0);
- let cost=buys.reduce((a,b)=>a+b.price,0);
+ let rev=sum(sales,"price");
+ let cost=sum(buys,"price");
 
- let t="Sistema attivo.";
+ let t="Sistema stabile.";
 
- if(cost>rev) t="⚠️ Costi troppo alti.";
+ if(cost>rev) t="⚠️ Uscite troppo alte.";
  if(rev>cost) t="✅ Crescita positiva.";
 
  chat.innerHTML=`<div class="ai">${t}</div>`;
@@ -661,14 +613,14 @@ function ask(){
 
  chat.innerHTML+=`<div class="user">${v}</div>`;
 
- let r="Consiglio: investi su pezzi rari.";
+ let r="Strategia: punta su opere certificate.";
 
- if(v.includes("perdo")) r="Riduci acquisti costosi.";
- if(v.includes("invest")) r="Compra arte certificata.";
+ if(v.includes("invest")) r="Compra nei mesi deboli.";
+ if(v.includes("perdo")) r="Riduci costi.";
 
  setTimeout(()=>{
   chat.innerHTML+=`<div class="ai">${r}</div>`;
-  chat.scrollTop=chat.scrollHeight;
+  chat.scrollTop=9999;
  },300);
 
  q.value="";
@@ -685,8 +637,14 @@ function exportData(){
  let a=document.createElement("a");
 
  a.href=URL.createObjectURL(blob);
- a.download="backup_ultra.json";
+ a.download="backup_ultimate.json";
  a.click();
+}
+
+/* TOOLS */
+
+function sum(a,f){
+ return a.reduce((x,y)=>x+y[f],0);
 }
 
 /* INIT */

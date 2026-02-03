@@ -1,1 +1,38 @@
+body {
+    font-family: Arial;
+    background: #f4f4f4;
+    text-align: center;
+    margin: 0;
+}
 
+h1 {
+    background: #222;
+    color: white;
+    padding: 15px;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(400px,1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+canvas {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.controls {
+    padding: 15px;
+}
+
+.dark {
+    background: #111;
+    color: white;
+}
+
+.dark canvas {
+    background: #222;
+}

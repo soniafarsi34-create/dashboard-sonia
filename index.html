@@ -4,482 +4,16 @@
 <meta charset="UTF-8">
 <title>Antiquarium Manager — Sonia</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-
 :root{
  --bg:#05070c;
  --card:#0d1119;
  --gold:#d4af37;
  --txt:#eee;
  --muted:#777;
-}
-
-body{
- margin:0;
- background:var(--bg);
- color:var(--txt);
- font-family:Inter,sans-serif;
-}
-
-
-/* HEADER */
-
-header{
- background:#0a0e15;
- padding:18px 25px;
- display:flex;
- justify-content:space-between;
- align-items:center;
- border-bottom:1px solid #1b1f2a;
-}
-
-header h2{
- color:var(--gold);
- letter-spacing:2px;
-}
-
-
-/* MENU */
-
-nav a{
- color:var(--txt);
- margin-left:18px;
- cursor:pointer;
- font-size:14px;
-}
-
-nav a:hover{color:var(--gold)}
-
-
-/* LAYOUT */
-
-.container{
- max-width:1200px;
- margin:auto;
- padding:25px;
-}
-
-.page{display:none}
-.page.active{display:block}
-
-.card{
- background:var(--card);
- border-radius:18px;
- padding:22px;
- margin-bottom:22px;
- border:1px solid #1b1f2a;
- box-shadow:0 0 40px rgba(0,0,0,.6);
-}
-
-h3{color:var(--gold)}
-
-
-/* FORM */
-
-input,select{
- width:100%;
- background:#080b12;
- border:1px solid #222;
- color:var(--txt);
- padding:10px;
- border-radius:8px;
- margin:6px 0;
-}
-
-button{
- background:var(--gold);
- color:black;
- border:none;
- padding:12px 18px;
- border-radius:10px;
- font-weight:700;
- cursor:pointer;
-}
-
-button:hover{opacity:.9}
-
-
-/* TABLE */
-
-table{
- width:100%;
- border-collapse:collapse;
- font-size:14px;
-}
-
-th,td{
- padding:8px;
- border-bottom:1px solid #222;
- text-align:left;
-}
-
-th{color:var(--gold)}
-
-
-/* KPI */
-
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
- gap:15px;
-}
-
-.kpi{
- background:#080b12;
- border:1px solid #222;
- border-radius:12px;
- padding:12px;
- text-align:center;
-}
-
-.kpi b{color:var(--gold);font-size:20px}
-
-</style>
-</head>
-
-<body>
-
-
-<header>
-
-<h2>ANTIQUARIUM MANAGER</h2>
-
-<nav>
-<a onclick="go('dashboard')">Dashboard</a>
-<a onclick="go('sales')">Vendite</a>
-<a onclick="go('buys')">Acquisti</a>
-<a onclick="go('stock')">Magazzino</a>
-<a onclick="go('export')">Backup</a>
-</nav>
-
-</header>
-
-
-<div class="container">
-
-
-<!-- DASHBOARD -->
-
-<div id="dashboard" class="page active">
-
-<div class="card">
-<h3>📊 Riepilogo Generale</h3>
-
-<div class="grid" id="kpi"></div>
-</div>
-
-</div>
-
-
-<!-- SALES -->
-
-<div id="sales" class="page">
-
-<div class="card">
-
-<h3>➕ Nuova Vendita</h3>
-
-<input id="s_name" placeholder="Oggetto venduto">
-<input id="s_price" placeholder="Prezzo vendita (€)">
-<input id="s_cost" placeholder="Costo acquisto (€)">
-<input id="s_date" type="date">
-
-<button onclick="addSale()">Salva Vendita</button>
-
-</div>
-
-
-<div class="card">
-
-<h3>📁 Storico Vendite</h3>
-
-<table id="salesTable"></table>
-
-</div>
-
-</div>
-
-
-<!-- BUYS -->
-
-<div id="buys" class="page">
-
-<div class="card">
-
-<h3>➕ Nuovo Acquisto</h3>
-
-<input id="b_name" placeholder="Oggetto acquistato">
-<input id="b_price" placeholder="Prezzo acquisto (€)">
-<input id="b_date" type="date">
-
-<button onclick="addBuy()">Salva Acquisto</button>
-
-</div>
-
-
-<div class="card">
-
-<h3>📁 Storico Acquisti</h3>
-
-<table id="buysTable"></table>
-
-</div>
-
-</div>
-
-
-<!-- STOCK -->
-
-<div id="stock" class="page">
-
-<div class="card">
-
-<h3>📦 Magazzino Attuale</h3>
-
-<table id="stockTable"></table>
-
-</div>
-
-</div>
-
-
-<!-- EXPORT -->
-
-<div id="export" class="page">
-
-<div class="card">
-
-<h3>💾 Backup Dati</h3>
-
-<button onclick="exportData()">Scarica Backup</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-let sales=JSON.parse(localStorage.getItem("sales")||"[]");
-let buys=JSON.parse(localStorage.getItem("buys")||"[]");
-
-
-// NAV
-
-function go(p){
- document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
- document.getElementById(p).classList.add("active");
-}
-
-
-// SAVE
-
-function save(){
- localStorage.setItem("sales",JSON.stringify(sales));
- localStorage.setItem("buys",JSON.stringify(buys));
-}
-
-
-// ADD SALE
-
-function addSale(){
-
-let o={
- name:s_name.value,
- price:+s_price.value,
- cost:+s_cost.value,
- date:s_date.value
-};
-
-if(!o.name||!o.price)return alert("Completa i dati");
-
-sales.push(o);
-save();
-
-s_name.value="";
-s_price.value="";
-s_cost.value="";
-s_date.value="";
-
-render();
-
-}
-
-
-// ADD BUY
-
-function addBuy(){
-
-let o={
- name:b_name.value,
- price:+b_price.value,
- date:b_date.value
-};
-
-if(!o.name||!o.price)return alert("Completa i dati");
-
-buys.push(o);
-save();
-
-b_name.value="";
-b_price.value="";
-b_date.value="";
-
-render();
-
-}
-
-
-// RENDER
-
-function render(){
-
-renderSales();
-renderBuys();
-renderStock();
-renderKPI();
-
-}
-
-
-// SALES TABLE
-
-function renderSales(){
-
-let h="<tr><th>Oggetto</th><th>Vendita</th><th>Costo</th><th>Profitto</th><th>Data</th></tr>";
-
-sales.forEach(s=>{
-
-h+=`
-<tr>
-<td>${s.name}</td>
-<td>${s.price}€</td>
-<td>${s.cost}€</td>
-<td>${(s.price-s.cost).toFixed(0)}€</td>
-<td>${s.date}</td>
-</tr>
-`;
-
-});
-
-salesTable.innerHTML=h;
-}
-
-
-// BUYS TABLE
-
-function renderBuys(){
-
-let h="<tr><th>Oggetto</th><th>Prezzo</th><th>Data</th></tr>";
-
-buys.forEach(b=>{
-
-h+=`
-<tr>
-<td>${b.name}</td>
-<td>${b.price}€</td>
-<td>${b.date}</td>
-</tr>
-`;
-
-});
-
-buysTable.innerHTML=h;
-}
-
-
-// STOCK
-
-function renderStock(){
-
-let sold=sales.map(x=>x.name);
-
-let h="<tr><th>Oggetto</th><th>Costo</th><th>Stato</th></tr>";
-
-buys.forEach(b=>{
-
-let st=sold.includes(b.name)?"Venduto":"In magazzino";
-
-h+=`
-<tr>
-<td>${b.name}</td>
-<td>${b.price}€</td>
-<td>${st}</td>
-</tr>
-`;
-
-});
-
-stockTable.innerHTML=h;
-}
-
-
-// KPI
-
-function renderKPI(){
-
-let rev=sales.reduce((a,b)=>a+b.price,0);
-let cost=buys.reduce((a,b)=>a+b.price,0);
-let prof=sales.reduce((a,b)=>a+(b.price-b.cost),0);
-
-kpi.innerHTML=`
-
-<div class="kpi"><b>${rev.toFixed(0)}€</b><br>Entrate</div>
-
-<div class="kpi"><b>${cost.toFixed(0)}€</b><br>Uscite</div>
-
-<div class="kpi"><b>${prof.toFixed(0)}€</b><br>Profitto</div>
-
-<div class="kpi"><b>${(rev-cost).toFixed(0)}€</b><br>Cashflow</div>
-
-`;
-
-}
-
-
-// EXPORT
-
-function exportData(){
-
-let data={sales,buys};
-
-let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
-
-let a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="antiquarium_backup.json";
-a.click();
-}
-
-
-// INIT
-
-render();
-
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<title>Antiquarium Manager PRO — Sonia</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-
-:root{
- --bg:#05070c;
- --card:#0d1119;
- --gold:#d4af37;
- --txt:#eee;
 }
 
 body{
@@ -514,7 +48,7 @@ nav a:hover{color:var(--gold)}
 /* LAYOUT */
 
 .container{
- max-width:1200px;
+ max-width:1400px;
  margin:auto;
  padding:25px;
 }
@@ -534,7 +68,7 @@ h3{color:var(--gold)}
 
 /* FORM */
 
-input{
+input,select,textarea{
  width:100%;
  background:#080b12;
  border:1px solid #222;
@@ -548,11 +82,13 @@ button{
  background:var(--gold);
  color:black;
  border:none;
- padding:12px 18px;
+ padding:12px 20px;
  border-radius:10px;
  font-weight:700;
  cursor:pointer;
 }
+
+button:hover{opacity:.9}
 
 /* TABLE */
 
@@ -573,7 +109,7 @@ th{color:var(--gold)}
 
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
  gap:15px;
 }
 
@@ -585,7 +121,21 @@ th{color:var(--gold)}
  text-align:center;
 }
 
-.kpi b{color:var(--gold);font-size:20px}
+.kpi b{color:var(--gold);font-size:22px}
+
+/* CHAT */
+
+.chat{
+ height:220px;
+ overflow:auto;
+ background:#080b12;
+ border:1px solid #222;
+ border-radius:12px;
+ padding:10px;
+}
+
+.user{color:var(--gold)}
+.ai{color:var(--txt)}
 
 </style>
 </head>
@@ -594,7 +144,7 @@ th{color:var(--gold)}
 
 <header>
 
-<h2>ANTIQUARIUM PRO</h2>
+<h2>ANTIQUARIUM MANAGER</h2>
 
 <nav>
 <a onclick="go('dashboard')">Dashboard</a>
@@ -602,16 +152,16 @@ th{color:var(--gold)}
 <a onclick="go('buys')">Acquisti</a>
 <a onclick="go('stock')">Magazzino</a>
 <a onclick="go('analytics')">Analytics</a>
-<a onclick="go('ai')">AI Advisor</a>
+<a onclick="go('catalog')">Catalogo</a>
+<a onclick="go('advisor')">AI</a>
+<a onclick="go('backup')">Backup</a>
 </nav>
 
 </header>
 
-
 <div class="container">
 
 <!-- DASHBOARD -->
-
 <div id="dashboard" class="page active">
 
 <div class="card">
@@ -619,26 +169,29 @@ th{color:var(--gold)}
 <div class="grid" id="kpi"></div>
 </div>
 
+<div class="card">
+<canvas id="mainChart"></canvas>
+</div>
+
 </div>
 
 
 <!-- SALES -->
-
 <div id="sales" class="page">
 
 <div class="card">
-<h3>➕ Vendita</h3>
+<h3>➕ Nuova Vendita</h3>
 
 <input id="s_name" placeholder="Oggetto">
-<input id="s_price" placeholder="Prezzo">
-<input id="s_cost" placeholder="Costo">
+<input id="s_price" placeholder="Prezzo vendita">
+<input id="s_cost" placeholder="Costo acquisto">
 <input id="s_date" type="date">
 
 <button onclick="addSale()">Salva</button>
 </div>
 
 <div class="card">
-<h3>Storico Vendite</h3>
+<h3>📁 Storico Vendite</h3>
 <table id="salesTable"></table>
 </div>
 
@@ -646,21 +199,20 @@ th{color:var(--gold)}
 
 
 <!-- BUYS -->
-
 <div id="buys" class="page">
 
 <div class="card">
-<h3>➕ Acquisto</h3>
+<h3>➕ Nuovo Acquisto</h3>
 
 <input id="b_name" placeholder="Oggetto">
-<input id="b_price" placeholder="Prezzo">
+<input id="b_price" placeholder="Prezzo acquisto">
 <input id="b_date" type="date">
 
 <button onclick="addBuy()">Salva</button>
 </div>
 
 <div class="card">
-<h3>Storico Acquisti</h3>
+<h3>📁 Storico Acquisti</h3>
 <table id="buysTable"></table>
 </div>
 
@@ -668,7 +220,6 @@ th{color:var(--gold)}
 
 
 <!-- STOCK -->
-
 <div id="stock" class="page">
 
 <div class="card">
@@ -680,7 +231,6 @@ th{color:var(--gold)}
 
 
 <!-- ANALYTICS -->
-
 <div id="analytics" class="page">
 
 <div class="card">
@@ -696,13 +246,50 @@ th{color:var(--gold)}
 </div>
 
 
-<!-- AI -->
-
-<div id="ai" class="page">
+<!-- CATALOG -->
+<div id="catalog" class="page">
 
 <div class="card">
-<h3>🧠 Consulente AI</h3>
-<div id="aiBox"></div>
+<h3>📝 Scheda Opera AI</h3>
+
+<input id="c_name" placeholder="Nome opera">
+<input id="c_era" placeholder="Epoca">
+<input id="c_mat" placeholder="Materiale">
+<input id="c_dim" placeholder="Dimensioni">
+
+<button onclick="describe()">Genera Descrizione</button>
+
+<div id="desc"></div>
+</div>
+
+</div>
+
+
+<!-- AI -->
+<div id="advisor" class="page">
+
+<div class="card">
+<h3>🤖 AI Advisor</h3>
+
+<div class="chat" id="chat"></div>
+
+<input id="q" placeholder="Chiedi qualcosa...">
+
+<button onclick="ask()">Invia</button>
+
+</div>
+
+</div>
+
+
+<!-- BACKUP -->
+<div id="backup" class="page">
+
+<div class="card">
+<h3>💾 Backup Dati</h3>
+
+<button onclick="exportData()">Scarica Backup</button>
+
 </div>
 
 </div>
@@ -715,7 +302,7 @@ th{color:var(--gold)}
 let sales=JSON.parse(localStorage.getItem("sales")||"[]");
 let buys=JSON.parse(localStorage.getItem("buys")||"[]");
 
-let chart1,chart2;
+let mainChart,chart1,chart2;
 
 
 /* NAV */
@@ -745,7 +332,7 @@ let o={
  date:s_date.value
 };
 
-if(!o.name||!o.price)return alert("Completa i dati");
+if(!o.name||!o.price)return alert("Compila tutti i campi");
 
 sales.push(o);
 save();
@@ -769,7 +356,7 @@ let o={
  date:b_date.value
 };
 
-if(!o.name||!o.price)return alert("Completa i dati");
+if(!o.name||!o.price)return alert("Compila tutti i campi");
 
 buys.push(o);
 save();
@@ -792,6 +379,7 @@ renderStock();
 renderKPI();
 renderCharts();
 renderAI();
+
 }
 
 
@@ -861,14 +449,14 @@ function renderKPI(){
 
 let rev=sales.reduce((a,b)=>a+b.price,0);
 let cost=buys.reduce((a,b)=>a+b.price,0);
-let prof=sales.reduce((a,b)=>a+(b.price-b.cost),0);
+let prof=rev-cost;
 
 kpi.innerHTML=`
 
 <div class="kpi"><b>${rev}€</b><br>Entrate</div>
 <div class="kpi"><b>${cost}€</b><br>Uscite</div>
 <div class="kpi"><b>${prof}€</b><br>Utile</div>
-<div class="kpi"><b>${rev-cost}€</b><br>Cashflow</div>
+<div class="kpi"><b>${sales.length}</b><br>Vendite</div>
 
 `;
 }
@@ -878,24 +466,24 @@ kpi.innerHTML=`
 
 function renderCharts(){
 
-let months={};
+let m={};
 
 sales.forEach(s=>{
- let m=s.date?.slice(0,7);
- if(m) months[m]=(months[m]||0)+s.price;
+ let k=s.date?.slice(0,7);
+ if(k)m[k]=(m[k]||0)+s.price;
 });
 
-let labels=Object.keys(months);
-let values=Object.values(months);
+let labels=Object.keys(m);
+let values=Object.values(m);
 
-if(chart1)chart1.destroy();
+if(mainChart)mainChart.destroy();
 
-chart1=new Chart(chart1Ctx,{
+mainChart=new Chart(mainChartCtx,{
  type:"line",
  data:{
   labels,
   datasets:[{
-   label:"Vendite",
+   label:"Ricavi",
    data:values,
    borderColor:"#d4af37"
   }]
@@ -906,9 +494,9 @@ chart1=new Chart(chart1Ctx,{
 let profs={};
 
 sales.forEach(s=>{
- let m=s.date?.slice(0,7);
+ let k=s.date?.slice(0,7);
  let p=s.price-s.cost;
- if(m) profs[m]=(profs[m]||0)+p;
+ if(k)profs[k]=(profs[k]||0)+p;
 });
 
 if(chart2)chart2.destroy();
@@ -924,6 +512,7 @@ chart2=new Chart(chart2Ctx,{
   }]
  }
 });
+
 }
 
 
@@ -933,1340 +522,58 @@ function renderAI(){
 
 let rev=sales.reduce((a,b)=>a+b.price,0);
 let cost=buys.reduce((a,b)=>a+b.price,0);
-let prof=rev-cost;
 
-let txt="";
+let txt="Sistema attivo.";
 
-if(prof<0){
- txt+="⚠️ Stai perdendo soldi.<br>";
- txt+="Riduci costi o alza prezzi.<br><br>";
+if(cost>rev) txt="⚠️ Stai spendendo più di quanto incassi.";
+if(rev>cost) txt="✅ Business in crescita.";
+
+chat.innerHTML=`<div class="ai">${txt}</div>`;
 }
 
-if(rev>cost){
- txt+="✅ Business positivo.<br>";
-}
-
-let best=findBest();
-
-txt+=`🔥 Miglior prodotto: ${best}<br>`;
-txt+=`💡 Consiglio: investi su articoli simili`;
-
-aiBox.innerHTML=txt;
-}
-
-
-function findBest(){
-
-let map={};
-
-sales.forEach(s=>{
- map[s.name]=(map[s.name]||0)+s.price;
-});
-
-return Object.keys(map).reduce((a,b)=>map[a]>map[b]?a:b,"-");
-}
-
-
-/* INIT */
-
-const chart1Ctx=document.getElementById("chart1");
-const chart2Ctx=document.getElementById("chart2");
-
-render();
-
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<title>Antiquarium AI Suite — Sonia</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-:root{
- --bg:#05070c;
- --card:#0d1119;
- --gold:#d4af37;
- --txt:#eee;
-}
-
-body{
- margin:0;
- background:var(--bg);
- color:var(--txt);
- font-family:Inter,sans-serif;
-}
-
-/* HEADER */
-
-header{
- background:#0a0e15;
- padding:18px 25px;
- display:flex;
- justify-content:space-between;
- align-items:center;
- border-bottom:1px solid #1b1f2a;
-}
-
-header h2{color:var(--gold)}
-
-nav a{
- color:var(--txt);
- margin-left:16px;
- cursor:pointer;
- font-size:13px;
-}
-
-nav a:hover{color:var(--gold)}
-
-/* LAYOUT */
-
-.container{
- max-width:1300px;
- margin:auto;
- padding:25px;
-}
-
-.page{display:none}
-.page.active{display:block}
-
-.card{
- background:var(--card);
- border-radius:18px;
- padding:22px;
- margin-bottom:22px;
- border:1px solid #1b1f2a;
-}
-
-h3{color:var(--gold)}
-
-input,select,textarea{
- width:100%;
- background:#080b12;
- border:1px solid #222;
- color:var(--txt);
- padding:10px;
- border-radius:8px;
- margin:6px 0;
-}
-
-button{
- background:var(--gold);
- color:black;
- border:none;
- padding:12px 18px;
- border-radius:10px;
- font-weight:700;
- cursor:pointer;
-}
-
-/* KPI */
-
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
- gap:15px;
-}
-
-.kpi{
- background:#080b12;
- border:1px solid #222;
- border-radius:12px;
- padding:12px;
- text-align:center;
-}
-
-.kpi b{color:var(--gold);font-size:20px}
-
-/* CHAT */
-
-.chat{
- height:220px;
- overflow:auto;
- background:#080b12;
- border:1px solid #222;
- border-radius:12px;
- padding:10px;
-}
-
-.user{color:var(--gold)}
-.ai{color:var(--txt)}
-
-</style>
-</head>
-
-<body>
-
-<header>
-<h2>ANTIQUARIUM · AI SUITE</h2>
-
-<nav>
-<a onclick="go('dashboard')">Dashboard</a>
-<a onclick="go('sales')">Vendite</a>
-<a onclick="go('buys')">Acquisti</a>
-<a onclick="go('analytics')">Analytics</a>
-<a onclick="go('catalog')">Catalogo</a>
-<a onclick="go('forecast')">Forecast</a>
-<a onclick="go('vision')">Vision AI</a>
-<a onclick="go('advisor')">Advisor</a>
-</nav>
-</header>
-
-<div class="container">
-
-<!-- DASHBOARD -->
-<div id="dashboard" class="page active">
-<div class="card">
-<h3>📊 Riepilogo</h3>
-<div class="grid" id="kpi"></div>
-</div>
-</div>
-
-<!-- SALES -->
-<div id="sales" class="page">
-<div class="card">
-<h3>➕ Vendita</h3>
-<input id="s_name" placeholder="Oggetto">
-<input id="s_price" placeholder="Prezzo">
-<input id="s_cost" placeholder="Costo">
-<input id="s_date" type="date">
-<button onclick="addSale()">Salva</button>
-</div>
-</div>
-
-<!-- BUYS -->
-<div id="buys" class="page">
-<div class="card">
-<h3>➕ Acquisto</h3>
-<input id="b_name" placeholder="Oggetto">
-<input id="b_price" placeholder="Prezzo">
-<input id="b_date" type="date">
-<button onclick="addBuy()">Salva</button>
-</div>
-</div>
-
-<!-- ANALYTICS -->
-<div id="analytics" class="page">
-<div class="card"><canvas id="chart1"></canvas></div>
-<div class="card"><canvas id="chart2"></canvas></div>
-</div>
-
-<!-- CATALOG -->
-<div id="catalog" class="page">
-<div class="card">
-<h3>📝 Scheda Opera AI</h3>
-
-<input id="c_name" placeholder="Nome opera">
-<input id="c_era" placeholder="Epoca">
-<input id="c_mat" placeholder="Materiale">
-<input id="c_dim" placeholder="Dimensioni">
-
-<button onclick="describe()">Genera</button>
-
-<div id="desc"></div>
-</div>
-</div>
-
-<!-- FORECAST -->
-<div id="forecast" class="page">
-<div class="card">
-<h3>🔮 Previsione Incassi</h3>
-<button onclick="forecast()">Calcola</button>
-<div id="forecastRes"></div>
-</div>
-</div>
-
-<!-- VISION -->
-<div id="vision" class="page">
-<div class="card">
-<h3>🖼️ Image Research</h3>
-<input type="file" id="img">
-<button onclick="vision()">Cerca Online</button>
-<div id="visionRes"></div>
-</div>
-</div>
-
-<!-- ADVISOR -->
-<div id="advisor" class="page">
-<div class="card">
-<h3>💬 Private Advisor</h3>
-<div class="chat" id="chat"></div>
-<input id="q">
-<button onclick="ask()">Invia</button>
-</div>
-</div>
-
-</div>
-
-<script>
-
-let sales=JSON.parse(localStorage.getItem("sales")||"[]");
-let buys=JSON.parse(localStorage.getItem("buys")||"[]");
-
-let chart1,chart2;
-
-/* NAV */
-
-function go(p){
- document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
- document.getElementById(p).classList.add("active");
-}
-
-/* SAVE */
-
-function save(){
- localStorage.setItem("sales",JSON.stringify(sales));
- localStorage.setItem("buys",JSON.stringify(buys));
-}
-
-/* ADD */
-
-function addSale(){
- sales.push({
-  name:s_name.value,
-  price:+s_price.value,
-  cost:+s_cost.value,
-  date:s_date.value
- });
- save(); render();
-}
-
-function addBuy(){
- buys.push({
-  name:b_name.value,
-  price:+b_price.value,
-  date:b_date.value
- });
- save(); render();
-}
-
-/* RENDER */
-
-function render(){
- renderKPI();
- renderCharts();
-}
-
-function renderKPI(){
- let rev=sales.reduce((a,b)=>a+b.price,0);
- let cost=buys.reduce((a,b)=>a+b.price,0);
- let prof=rev-cost;
-
- kpi.innerHTML=`
-
- <div class="kpi"><b>${rev}€</b><br>Entrate</div>
- <div class="kpi"><b>${cost}€</b><br>Uscite</div>
- <div class="kpi"><b>${prof}€</b><br>Profitto</div>
-
- `;
-}
-
-/* CHART */
-
-function renderCharts(){
-
- let m={};
-
- sales.forEach(s=>{
-  let k=s.date?.slice(0,7);
-  if(k)m[k]=(m[k]||0)+s.price;
- });
-
- let labels=Object.keys(m);
- let vals=Object.values(m);
-
- if(chart1)chart1.destroy();
-
- chart1=new Chart(chart1Ctx,{
-  type:"line",
-  data:{labels,datasets:[{label:"Vendite",data:vals,borderColor:"#d4af37"}]}
- });
-
-}
-
-/* AI CATALOG */
-
-function describe(){
-
- let t=`
-
-${c_name.value} — raffinato esemplare dell'epoca ${c_era.value},
-realizzato in ${c_mat.value}.
-Dimensioni: ${c_dim.value}.
-
-Opera di elevato pregio storico e collezionistico.
-
-`;
-
- desc.innerHTML=t;
-}
-
-/* FORECAST */
-
-function forecast(){
-
- let avg=sales.reduce((a,b)=>a+b.price,0)/sales.length||0;
-
- let next=(avg*1.15).toFixed(0);
-
- forecastRes.innerHTML=`
- Previsione prossimo mese: <b style="color:#d4af37">${next}€</b>
- `;
-}
-
-/* VISION */
-
-function vision(){
-
- let url="https://lens.google.com/";
-
- visionRes.innerHTML=`
- <a href="${url}" target="_blank" style="color:#d4af37">Apri Google Lens</a>
- `;
-}
-
-/* CHAT */
 
 function ask(){
 
- let qv=q.value.toLowerCase();
- add("Tu",qv,"user");
+let qv=q.value;
 
- let r="Strategia: punta su pezzi rari";
+chat.innerHTML+=`<div class="user">${qv}</div>`;
 
- if(qv.includes("perdo")) r="Riduci costi e aumenta markup";
- if(qv.includes("compra")) r="Compra opere certificate";
+let r="Strategia: punta su pezzi rari e certificati.";
 
- setTimeout(()=>add("AI",r,"ai"),400);
- q.value="";
-}
+if(qv.includes("perdo")) r="Riduci costi e aumenta margini.";
+if(qv.includes("prezzi")) r="Aumenta del 5-10% sui bestseller.";
 
-function add(u,t,c){
-
- chat.innerHTML+=`<div class="${c}"><b>${u}:</b> ${t}</div>`;
+setTimeout(()=>{
+ chat.innerHTML+=`<div class="ai">${r}</div>`;
  chat.scrollTop=chat.scrollHeight;
-}
+},400);
 
-/* INIT */
-
-const chart1Ctx=document.getElementById("chart1");
-
-render();
-
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<title>Antiquarium Enterprise — Sonia</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-:root{
- --bg:#04060b;
- --card:#0c1018;
- --gold:#d4af37;
- --txt:#eee;
-}
-
-body{
- margin:0;
- background:var(--bg);
- color:var(--txt);
- font-family:Inter,sans-serif;
-}
-
-header{
- background:#090d14;
- padding:18px 25px;
- display:flex;
- justify-content:space-between;
- align-items:center;
- border-bottom:1px solid #1a1e28;
-}
-
-header h2{color:var(--gold)}
-
-nav a{
- color:var(--txt);
- margin-left:14px;
- cursor:pointer;
- font-size:13px;
-}
-
-nav a:hover{color:var(--gold)}
-
-.container{
- max-width:1400px;
- margin:auto;
- padding:25px;
-}
-
-.page{display:none}
-.page.active{display:block}
-
-.card{
- background:var(--card);
- border-radius:18px;
- padding:22px;
- margin-bottom:22px;
- border:1px solid #1a1e28;
-}
-
-h3{color:var(--gold)}
-
-input,select{
- width:100%;
- background:#070a11;
- border:1px solid #222;
- color:var(--txt);
- padding:10px;
- border-radius:8px;
- margin:6px 0;
-}
-
-button{
- background:var(--gold);
- color:black;
- border:none;
- padding:12px 18px;
- border-radius:10px;
- font-weight:700;
- cursor:pointer;
-}
-
-/* GRID */
-
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
- gap:15px;
-}
-
-.kpi{
- background:#070a11;
- border:1px solid #222;
- border-radius:12px;
- padding:12px;
- text-align:center;
-}
-
-.kpi b{color:var(--gold);font-size:20px}
-
-/* CHAT */
-
-.chat{
- height:220px;
- overflow:auto;
- background:#070a11;
- border:1px solid #222;
- border-radius:12px;
- padding:10px;
-}
-
-.user{color:var(--gold)}
-.ai{color:var(--txt)}
-
-</style>
-</head>
-
-<body>
-
-<header>
-<h2>ANTIQUARIUM · ENTERPRISE</h2>
-
-<nav>
-<a onclick="go('dashboard')">Dashboard</a>
-<a onclick="go('clients')">Clienti</a>
-<a onclick="go('payments')">Pagamenti</a>
-<a onclick="go('auctions')">Aste</a>
-<a onclick="go('cashflow')">Cashflow</a>
-<a onclick="go('advisor')">AI</a>
-</nav>
-</header>
-
-
-<div class="container">
-
-<!-- DASHBOARD -->
-
-<div id="dashboard" class="page active">
-
-<div class="card">
-<h3>📊 Stato Azienda</h3>
-<div class="grid" id="kpi"></div>
-</div>
-
-</div>
-
-
-<!-- CLIENTS -->
-
-<div id="clients" class="page">
-
-<div class="card">
-
-<h3>👥 Nuovo Cliente</h3>
-
-<input id="c_name" placeholder="Nome">
-<input id="c_email" placeholder="Email">
-<input id="c_country" placeholder="Paese">
-
-<button onclick="addClient()">Salva</button>
-
-</div>
-
-
-<div class="card">
-
-<h3>📁 Archivio Clienti</h3>
-
-<table id="clientsTable"></table>
-
-</div>
-
-</div>
-
-
-<!-- PAYMENTS -->
-
-<div id="payments" class="page">
-
-<div class="card">
-
-<h3>💳 Pagamento</h3>
-
-<input id="p_client" placeholder="Cliente">
-<input id="p_amount" placeholder="Importo">
-<input id="p_date" type="date">
-
-<button onclick="addPayment()">Registra</button>
-
-</div>
-
-<div class="card">
-
-<h3>📄 Storico Pagamenti</h3>
-
-<table id="paymentsTable"></table>
-
-</div>
-
-</div>
-
-
-<!-- AUCTIONS -->
-
-<div id="auctions" class="page">
-
-<div class="card">
-
-<h3>🏛️ Simulatore Asta</h3>
-
-<input id="a_item" placeholder="Opera">
-<input id="a_base" placeholder="Base d'asta">
-
-<button onclick="simulate()">Simula</button>
-
-<div id="auctionRes"></div>
-
-</div>
-
-</div>
-
-
-<!-- CASHFLOW -->
-
-<div id="cashflow" class="page">
-
-<div class="card">
-<h3>💰 Analisi Cashflow</h3>
-<canvas id="cfChart"></canvas>
-</div>
-
-</div>
-
-
-<!-- AI -->
-
-<div id="advisor" class="page">
-
-<div class="card">
-
-<h3>🧠 Strategic Advisor</h3>
-
-<div class="chat" id="chat"></div>
-
-<input id="q">
-
-<button onclick="ask()">Invia</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-let clients=JSON.parse(localStorage.getItem("clients")||"[]");
-let payments=JSON.parse(localStorage.getItem("payments")||"[]");
-
-
-let cfChart;
-
-
-/* NAV */
-
-function go(p){
- document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
- document.getElementById(p).classList.add("active");
-}
-
-
-/* SAVE */
-
-function save(){
- localStorage.setItem("clients",JSON.stringify(clients));
- localStorage.setItem("payments",JSON.stringify(payments));
-}
-
-
-/* CLIENTS */
-
-function addClient(){
-
-let c={
- name:c_name.value,
- email:c_email.value,
- country:c_country.value
-};
-
-if(!c.name)return;
-
-clients.push(c);
-save();
-render();
-}
-
-
-function renderClients(){
-
-let h="<tr><th>Nome</th><th>Email</th><th>Paese</th></tr>";
-
-clients.forEach(c=>{
- h+=`
- <tr>
- <td>${c.name}</td>
- <td>${c.email}</td>
- <td>${c.country}</td>
- </tr>`;
-});
-
-clientsTable.innerHTML=h;
-}
-
-
-/* PAYMENTS */
-
-function addPayment(){
-
-let p={
- client:p_client.value,
- amount:+p_amount.value,
- date:p_date.value
-};
-
-if(!p.client||!p.amount)return;
-
-payments.push(p);
-save();
-render();
-}
-
-
-function renderPayments(){
-
-let h="<tr><th>Cliente</th><th>Importo</th><th>Data</th></tr>";
-
-payments.forEach(p=>{
- h+=`
- <tr>
- <td>${p.client}</td>
- <td>${p.amount}€</td>
- <td>${p.date}</td>
- </tr>`;
-});
-
-paymentsTable.innerHTML=h;
-}
-
-
-/* AUCTIONS */
-
-function simulate(){
-
-let base=+a_base.value||0;
-
-let max=base*(1.4+Math.random());
-
-auctionRes.innerHTML=`
-
-Stima finale: <b style="color:#d4af37">${max.toFixed(0)}€</b>
-
-`;
-}
-
-
-/* CASHFLOW */
-
-function renderCashflow(){
-
-let m={};
-
-payments.forEach(p=>{
- let k=p.date?.slice(0,7);
- if(k)m[k]=(m[k]||0)+p.amount;
-});
-
-let labels=Object.keys(m);
-let vals=Object.values(m);
-
-if(cfChart)cfChart.destroy();
-
-cfChart=new Chart(cfCtx,{
- type:"line",
- data:{
-  labels,
-  datasets:[{
-   label:"Entrate",
-   data:vals,
-   borderColor:"#d4af37"
-  }]
- }
-});
-}
-
-
-/* AI */
-
-function ask(){
-
-let qv=q.value.toLowerCase();
-
-add("Tu",qv,"user");
-
-let r="Strategia: fidelizza top clienti";
-
-if(qv.includes("perdo")) r="Riduci costi fissi";
-if(qv.includes("asta")) r="Aumenta base solo su pezzi rari";
-
-setTimeout(()=>add("AI",r,"ai"),400);
 q.value="";
-}
-
-
-function add(u,t,c){
-
-chat.innerHTML+=`<div class="${c}"><b>${u}:</b> ${t}</div>`;
-chat.scrollTop=chat.scrollHeight;
-}
-
-
-/* KPI */
-
-function renderKPI(){
-
-let tot=payments.reduce((a,b)=>a+b.amount,0);
-
-kpi.innerHTML=`
-
-<div class="kpi"><b>${clients.length}</b><br>Clienti</div>
-<div class="kpi"><b>${tot}€</b><br>Incassi</div>
-<div class="kpi"><b>${payments.length}</b><br>Pagamenti</div>
-
-`;
-}
-
-
-/* RENDER */
-
-function render(){
-
-renderClients();
-renderPayments();
-renderCashflow();
-renderKPI();
-}
-
-
-/* INIT */
-
-const cfCtx=document.getElementById("cfChart");
-
-render();
-
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<title>Antiquarium Ultimate — Sonia</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-:root{
- --bg:#02040a;
- --card:#0b1019;
- --gold:#d4af37;
- --txt:#eee;
- --red:#ff5555;
-}
-
-body{
- margin:0;
- background:var(--bg);
- color:var(--txt);
- font-family:Inter,sans-serif;
-}
-
-/* LOGIN */
-
-#login{
- position:fixed;
- inset:0;
- background:#02040a;
- display:flex;
- justify-content:center;
- align-items:center;
- z-index:999;
-}
-
-#loginBox{
- background:#0b1019;
- padding:30px;
- border-radius:16px;
- border:1px solid #222;
- width:300px;
- text-align:center;
-}
-
-#loginBox h2{color:var(--gold)}
-
-
-/* HEADER */
-
-header{
- background:#070b13;
- padding:18px 25px;
- display:flex;
- justify-content:space-between;
- align-items:center;
- border-bottom:1px solid #1a1e28;
-}
-
-header h2{color:var(--gold)}
-
-nav a{
- color:var(--txt);
- margin-left:14px;
- cursor:pointer;
- font-size:13px;
-}
-
-nav a:hover{color:var(--gold)}
-
-
-/* LAYOUT */
-
-.container{
- max-width:1500px;
- margin:auto;
- padding:25px;
-}
-
-.page{display:none}
-.page.active{display:block}
-
-.card{
- background:var(--card);
- border-radius:18px;
- padding:22px;
- margin-bottom:22px;
- border:1px solid #1a1e28;
-}
-
-h3{color:var(--gold)}
-
-input{
- width:100%;
- background:#05080f;
- border:1px solid #222;
- color:var(--txt);
- padding:10px;
- border-radius:8px;
- margin:6px 0;
-}
-
-button{
- background:var(--gold);
- color:black;
- border:none;
- padding:12px 18px;
- border-radius:10px;
- font-weight:700;
- cursor:pointer;
-}
-
-/* KPI */
-
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
- gap:15px;
-}
-
-.kpi{
- background:#05080f;
- border:1px solid #222;
- border-radius:12px;
- padding:12px;
- text-align:center;
-}
-
-.kpi b{color:var(--gold);font-size:22px}
-
-/* CHAT */
-
-.chat{
- height:250px;
- overflow:auto;
- background:#05080f;
- border:1px solid #222;
- border-radius:12px;
- padding:10px;
-}
-
-.user{color:var(--gold)}
-.ai{color:var(--txt)}
-
-</style>
-</head>
-
-<body>
-
-
-<!-- LOGIN -->
-
-<div id="login">
- <div id="loginBox">
-  <h2>Accesso</h2>
-  <input id="user" placeholder="Username">
-  <input id="pass" type="password" placeholder="Password">
-  <button onclick="login()">Entra</button>
- </div>
-</div>
-
-
-<header>
-
-<h2>ANTIQUARIUM · ULTIMATE</h2>
-
-<nav>
-<a onclick="go('ceo')">CEO</a>
-<a onclick="go('finance')">Finanza</a>
-<a onclick="go('ai')">AI</a>
-<a onclick="go('backup')">Backup</a>
-<a onclick="go('export')">Export</a>
-<a onclick="logout()">Logout</a>
-</nav>
-
-</header>
-
-
-<div class="container">
-
-
-<!-- CEO -->
-
-<div id="ceo" class="page active">
-
-<div class="card">
-<h3>📊 CEO Dashboard</h3>
-<div class="grid" id="kpi"></div>
-</div>
-
-<div class="card">
-<canvas id="mainChart"></canvas>
-</div>
-
-</div>
-
-
-<!-- FINANCE -->
-
-<div id="finance" class="page">
-
-<div class="card">
-<h3>💰 Analisi Finanziaria</h3>
-<div id="financeAI"></div>
-</div>
-
-</div>
-
-
-<!-- AI -->
-
-<div id="ai" class="page">
-
-<div class="card">
-
-<h3>🤖 AI Advisor (GPT Ready)</h3>
-
-<p>Inserisci API Key (opzionale)</p>
-<input id="api">
-
-<textarea id="prompt" placeholder="Chiedi qualsiasi cosa..." style="height:80px"></textarea>
-
-<button onclick="askGPT()">Invia</button>
-
-<div class="chat" id="chat"></div>
-
-</div>
-
-</div>
-
-
-<!-- BACKUP -->
-
-<div id="backup" class="page">
-
-<div class="card">
-
-<h3>☁️ Backup</h3>
-
-<button onclick="cloud()">Genera Backup</button>
-
-<div id="cloudRes"></div>
-
-</div>
-
-</div>
-
-
-<!-- EXPORT -->
-
-<div id="export" class="page">
-
-<div class="card">
-
-<h3>📤 Export Excel</h3>
-
-<button onclick="exportExcel()">Scarica</button>
-
-</div>
-
-</div>
-
-
-</div>
-
-
-<script>
-
-/* LOGIN */
-
-let USER="sonia";
-let PASS="1234";
-
-function login(){
-
- if(user.value===USER && pass.value===PASS){
-  login.style.display="none";
- }else{
-  alert("Credenziali errate");
- }
-}
-
-function logout(){
- location.reload();
-}
-
-
-/* DATA */
-
-let sales=JSON.parse(localStorage.getItem("sales")||"[]");
-let buys=JSON.parse(localStorage.getItem("buys")||"[]");
-let payments=JSON.parse(localStorage.getItem("payments")||"[]");
-
-
-/* NAV */
-
-function go(p){
- document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
- document.getElementById(p).classList.add("active");
-}
-
-
-/* KPI */
-
-function renderKPI(){
-
- let rev=sales.reduce((a,b)=>a+b.price,0);
- let cost=buys.reduce((a,b)=>a+b.price,0);
- let prof=rev-cost;
-
- kpi.innerHTML=`
-
- <div class="kpi"><b>${rev}€</b><br>Entrate</div>
- <div class="kpi"><b>${cost}€</b><br>Uscite</div>
- <div class="kpi"><b>${prof}€</b><br>Utile</div>
- <div class="kpi"><b>${sales.length}</b><br>Vendite</div>
-
- `;
-}
-
-
-/* CEO CHART */
-
-let chart;
-
-function renderChart(){
-
- let m={};
-
- sales.forEach(s=>{
-  let k=s.date?.slice(0,7);
-  if(k)m[k]=(m[k]||0)+s.price;
- });
-
- if(chart)chart.destroy();
-
- chart=new Chart(mainChartCtx,{
-  type:"line",
-  data:{
-   labels:Object.keys(m),
-   datasets:[{
-    label:"Ricavi",
-    data:Object.values(m),
-    borderColor:"#d4af37"
-   }]
-  }
- });
-}
-
-
-/* FINANCE AI */
-
-function financeAI(){
-
- let rev=sales.reduce((a,b)=>a+b.price,0);
- let cost=buys.reduce((a,b)=>a+b.price,0);
-
- let txt="";
-
- if(cost>rev){
-  txt+="⚠️ Costi superiori ai ricavi<br>";
- }
-
- if(rev>cost){
-  txt+="✅ Cashflow positivo<br>";
- }
-
- financeAI.innerHTML=txt;
-}
-
-
-/* GPT */
-
-async function askGPT(){
-
- let key=api.value;
- let q=prompt.value;
-
- if(!key)return alert("Inserisci API Key");
-
- let res=await fetch("https://api.openai.com/v1/chat/completions",{
-  method:"POST",
-  headers:{
-   "Content-Type":"application/json",
-   "Authorization":"Bearer "+key
-  },
-  body:JSON.stringify({
-   model:"gpt-4",
-   messages:[{role:"user",content:q}]
-  })
- });
-
- let data=await res.json();
-
- let r=data.choices[0].message.content;
-
- chat.innerHTML+=`
- <div class="user"><b>Tu:</b> ${q}</div>
- <div class="ai"><b>AI:</b> ${r}</div>
- `;
 }
 
 
 /* BACKUP */
 
-function cloud(){
+function exportData(){
 
- let data={sales,buys,payments};
+let data={sales,buys};
 
- let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
 
- let url=URL.createObjectURL(blob);
-
- cloudRes.innerHTML=`
- <a href="${url}" download="backup.json" style="color:#d4af37">Scarica Backup</a>
- `;
-}
-
-
-/* EXPORT */
-
-function exportExcel(){
-
- let csv="Oggetto,Prezzo,Costo,Data\n";
-
- sales.forEach(s=>{
-  csv+=`${s.name},${s.price},${s.cost},${s.date}\n`;
- });
-
- let blob=new Blob([csv],{type:"text/csv"});
-
- let a=document.createElement("a");
- a.href=URL.createObjectURL(blob);
- a.download="vendite.csv";
- a.click();
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="antiquarium_backup.json";
+a.click();
 }
 
 
 /* INIT */
 
 const mainChartCtx=document.getElementById("mainChart");
+const chart1Ctx=document.getElementById("chart1");
+const chart2Ctx=document.getElementById("chart2");
 
-renderKPI();
-renderChart();
-financeAI();
+render();
 
 </script>
 

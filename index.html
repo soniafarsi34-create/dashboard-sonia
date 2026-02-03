@@ -2,159 +2,281 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Sonia AI Dashboard</title>
+<title>Sonia AI Sales Intelligence</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+
 body{
   font-family: Arial;
-  background:#eef2f7;
+  background:#e9eef5;
   padding:20px;
 }
 
-h1{text-align:center}
+h1{text-align:center;color:#333}
 
 .box{
   background:white;
   padding:15px;
   margin:15px 0;
-  border-radius:10px;
-  box-shadow:0 0 8px #ccc;
+  border-radius:12px;
+  box-shadow:0 0 12px #ccc;
 }
 
 button{
   width:100%;
   padding:12px;
-  background:#6c63ff;
+  background:#5a67d8;
   color:white;
   border:none;
   border-radius:8px;
   font-size:16px;
 }
 
-input{
+input,select,textarea{
   width:100%;
   padding:8px;
   margin:5px 0;
 }
 
+.flex{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.card{
+  flex:1;
+  min-width:150px;
+  background:#f7f9fc;
+  padding:10px;
+  border-radius:8px;
+  text-align:center;
+}
+
 .chat{
-  height:180px;
+  height:220px;
   overflow:auto;
   border:1px solid #ddd;
   padding:10px;
+  background:#fafafa;
 }
+
+.msg-u{color:#5a67d8}
+.msg-a{color:#222}
+
 </style>
 </head>
 
 <body>
 
-<h1>🤖 Sonia Business AI</h1>
+<h1>🚀 Sonia AI Sales Intelligence</h1>
 
+<!-- UPLOAD -->
 <div class="box">
-<h3>📂 Carica Excel / CSV</h3>
-<input type="file" id="file">
-<button onclick="loadFile()">Analizza</button>
+<h3>📂 Carica File (Excel / CSV / TXT)</h3>
+<input type="file" id="file" multiple>
+<button onclick="load()">Analizza</button>
 </div>
 
+<!-- KPI -->
 <div class="box">
-<h3>💰 Sintesi</h3>
-<div id="totali"></div>
+<h3>📊 KPI Principali</h3>
+<div class="flex" id="kpi"></div>
+</div>
+
+<!-- GRAFICI -->
+<div class="box">
+<h3>📈 Performance</h3>
+<canvas id="sales"></canvas>
 </div>
 
 <div class="box">
 <h3>🏪 Canali</h3>
-<canvas id="canali"></canvas>
+<canvas id="channels"></canvas>
 </div>
 
 <div class="box">
-<h3>🎨 Tipologie</h3>
-<canvas id="tipi"></canvas>
+<h3>🎨 Prodotti / Tipologie</h3>
+<canvas id="types"></canvas>
 </div>
 
 <div class="box">
-<h3>🧠 Consigli AI</h3>
-<div id="insight"></div>
+<h3>📅 Stagionalità</h3>
+<canvas id="months"></canvas>
 </div>
 
+<!-- AI -->
 <div class="box">
-<h3>💬 Chat</h3>
+<h3>🧠 AI Insights</h3>
+<div id="ai"></div>
+</div>
+
+<!-- STRATEGY -->
+<div class="box">
+<h3>🎯 Strategia & Alert</h3>
+<div id="strategy"></div>
+</div>
+
+<!-- CHAT -->
+<div class="box">
+<h3>💬 Business Chat AI</h3>
 <div class="chat" id="chat"></div>
-<input id="q" placeholder="Scrivi una domanda...">
-<button onclick="ask()">Chiedi</button>
+<input id="q" placeholder="Chiedi qualcosa sul business...">
+<button onclick="ask()">Invia</button>
 </div>
 
 <script>
 
-let dati=[];
+let data=[];
 let stats={};
 
-function loadFile(){
 
-let f=document.getElementById("file").files[0];
-if(!f){alert("Carica un file");return;}
+// ================= FILE LOADER =================
 
-let r=new FileReader();
+function load(){
 
-r.onload=e=>{
- let wb=XLSX.read(e.target.result,{type:"binary"});
- let sh=wb.Sheets[wb.SheetNames[0]];
- dati=XLSX.utils.sheet_to_json(sh);
- analizza();
-};
+const files=document.getElementById("file").files;
 
-r.readAsBinaryString(f);
+if(!files.length){
+ alert("Carica almeno un file");
+ return;
+}
+
+data=[];
+
+let loaded=0;
+
+for(let f of files){
+
+ const r=new FileReader();
+
+ r.onload=e=>{
+
+  if(f.name.endsWith(".csv") || f.name.endsWith(".txt")){
+   parseCSV(e.target.result);
+  }else{
+   const wb=XLSX.read(e.target.result,{type:"binary"});
+   const sh=wb.Sheets[wb.SheetNames[0]];
+   data=data.concat(XLSX.utils.sheet_to_json(sh));
+  }
+
+  loaded++;
+
+  if(loaded===files.length) analyze();
+ };
+
+ if(f.name.endsWith(".csv")||f.name.endsWith(".txt")){
+  r.readAsText(f);
+ }else{
+  r.readAsBinaryString(f);
+ }
+}
+
 }
 
 
-function analizza(){
+function parseCSV(t){
 
-let canali={},tipi={};
-let tot=0,prof=0;
+const rows=t.split("\n");
 
-dati.forEach(r=>{
+const head=rows[0].split(",");
 
- let p=Number(r["prezzo di vendita"]||0);
- let pr=Number(r["profitto"]||0);
+for(let i=1;i<rows.length;i++){
 
- let c=r["luogo di vendita"];
- let t=r["TIPOLOGIA"];
+ let obj={};
+
+ let cols=rows[i].split(",");
+
+ head.forEach((h,j)=>{
+  obj[h.trim()]=cols[j];
+ });
+
+ data.push(obj);
+}
+
+}
+
+
+// ================= ANALYSIS =================
+
+function analyze(){
+
+let tot=0,prof=0,qty=0;
+
+let channels={},types={},months={};
+
+data.forEach(r=>{
+
+ let p=Number(r["prezzo di vendita"]||r["price"]||0);
+ let pr=Number(r["profitto"]||r["profit"]||0);
+ let q=Number(r["quantita"]||1);
+
+ let c=r["luogo di vendita"]||r["channel"];
+ let t=r["TIPOLOGIA"]||r["type"];
+ let m=r["MeseNorm"]||r["month"];
 
  if(p>0){
 
   tot+=p;
   prof+=pr;
+  qty+=q;
 
-  if(c) canali[c]=(canali[c]||0)+p;
-  if(t) tipi[t]=(tipi[t]||0)+p;
+  if(c) channels[c]=(channels[c]||0)+p;
+  if(t) types[t]=(types[t]||0)+p;
+  if(m) months[m]=(months[m]||0)+p;
  }
-
 });
 
-stats={tot,prof,canali,tipi};
+stats={tot,prof,qty,channels,types,months};
 
-mostra();
-grafico("canali",canali,"Canali");
-grafico("tipi",tipi,"Tipologie");
-consigli();
+showKPI();
+charts();
+aiInsights();
+strategy();
+
 }
 
 
-function mostra(){
+// ================= KPI =================
+
+function showKPI(){
 
 let m=(stats.prof/stats.tot*100)||0;
 
-document.getElementById("totali").innerHTML=`
-Vendite: <b>${stats.tot.toFixed(0)} €</b><br>
-Profitto: <b>${stats.prof.toFixed(0)} €</b><br>
-Margine: <b>${m.toFixed(1)}%</b>
+let avg=stats.tot/(stats.qty||1);
+
+document.getElementById("kpi").innerHTML=`
+
+<div class="card">💶<br><b>${stats.tot.toFixed(0)}€</b><br>Vendite</div>
+
+<div class="card">📈<br><b>${stats.prof.toFixed(0)}€</b><br>Profitto</div>
+
+<div class="card">📊<br><b>${m.toFixed(1)}%</b><br>Margine</div>
+
+<div class="card">🛒<br><b>${stats.qty}</b><br>Pezzi</div>
+
+<div class="card">💳<br><b>${avg.toFixed(0)}€</b><br>Scontrino Medio</div>
+
 `;
+
 }
 
 
-function grafico(id,obj,t){
+// ================= CHARTS =================
+
+function charts(){
+
+bar("channels",stats.channels,"Canali");
+bar("types",stats.types,"Tipologie");
+bar("months",stats.months,"Mesi");
+
+}
+
+
+function bar(id,obj,label){
 
 let ctx=document.getElementById(id);
 
@@ -165,65 +287,142 @@ ctx.chart=new Chart(ctx,{
  data:{
   labels:Object.keys(obj),
   datasets:[{
-   label:t,
+   label,
    data:Object.values(obj)
   }]
  }
 });
+
 }
 
 
-function consigli(){
+// ================= AI =================
 
-let bc=max(stats.canali);
-let bt=max(stats.tipi);
+function aiInsights(){
+
+let bestC=max(stats.channels);
+let bestT=max(stats.types);
+
+let m=stats.prof/stats.tot;
 
 let txt=`
-🔥 Miglior canale: ${bc}<br>
-💎 Miglior tipologia: ${bt}<br>
+
+🔥 Miglior canale: <b>${bestC}</b><br>
+💎 Miglior prodotto: <b>${bestT}</b><br>
+📊 Margine: <b>${(m*100).toFixed(1)}%</b><br><br>
+
 `;
 
-if(stats.prof/stats.tot<0.3){
- txt+="⚠️ Margine basso<br>";
+if(m<0.25){
+ txt+="⚠️ Margine critico → rivedi prezzi<br>";
 }
 
-document.getElementById("insight").innerHTML=txt;
+if(stats.qty<50){
+ txt+="📦 Volume basso → aumenta marketing<br>";
 }
 
+if(stats.tot>50000){
+ txt+="🚀 Performance top-level<br>";
+}
+
+txt+="<br>👉 Focus: "+bestT+" su "+bestC;
+
+document.getElementById("ai").innerHTML=txt;
+
+}
+
+
+// ================= STRATEGY =================
+
+function strategy(){
+
+let worstC=min(stats.channels);
+let worstT=min(stats.types);
+
+let s=`
+
+❌ Canale debole: ${worstC}<br>
+⚠️ Prodotto debole: ${worstT}<br><br>
+
+✅ Test promozioni su ${worstT}<br>
+✅ Bundle con ${max(stats.types)}<br>
+✅ Aumenta presenza su ${max(stats.channels)}
+
+`;
+
+document.getElementById("strategy").innerHTML=s;
+
+}
+
+
+// ================= CHAT =================
 
 function ask(){
 
 let q=document.getElementById("q").value.toLowerCase();
 if(!q)return;
 
-let r="";
+add("Tu",q,"msg-u");
 
-if(q.includes("vend")){
- r="Vendi meglio su "+max(stats.canali);
-}
-else if(q.includes("compra")){
- r="Compra più "+max(stats.tipi);
-}
-else if(q.includes("profit")){
- r="Profitto: "+stats.prof.toFixed(0)+" €";
-}
-else{
- r="Concentrati su "+max(stats.tipi)+" e "+max(stats.canali);
-}
+let r=aiChat(q);
 
-let c=document.getElementById("chat");
-
-c.innerHTML+=`<div><b>Tu:</b> ${q}</div>`;
-c.innerHTML+=`<div><b>AI:</b> ${r}</div>`;
-
-c.scrollTop=c.scrollHeight;
+setTimeout(()=>add("AI",r,"msg-a"),500);
 
 document.getElementById("q").value="";
+
 }
 
+
+function add(u,t,c){
+
+let d=document.getElementById("chat");
+
+d.innerHTML+=`<div class="${c}"><b>${u}:</b> ${t}</div>`;
+
+d.scrollTop=d.scrollHeight;
+
+}
+
+
+function aiChat(q){
+
+if(q.includes("dove")&&q.includes("vend")){
+ return "Vendi meglio su "+max(stats.channels);
+}
+
+if(q.includes("perché")){
+ return "Dipende da mix prodotti, prezzi e stagionalità";
+}
+
+if(q.includes("invest")){
+ return "Investi su "+max(stats.types)+" in "+max(stats.channels);
+}
+
+if(q.includes("profit")){
+ return "Profitto: "+stats.prof.toFixed(0)+"€";
+}
+
+if(q.includes("prezzo")){
+ return "Valuta aumento del 5-10% sui top prodotti";
+}
+
+if(q.includes("futuro")){
+ return "Trend positivo su "+max(stats.types);
+}
+
+return "Strategia: focus su "+max(stats.types)+" via "+max(stats.channels);
+
+}
+
+
+// ================= UTILS =================
 
 function max(o){
  return Object.keys(o).reduce((a,b)=>o[a]>o[b]?a:b);
+}
+
+function min(o){
+ return Object.keys(o).reduce((a,b)=>o[a]<o[b]?a:b);
 }
 
 </script>

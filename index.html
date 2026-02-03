@@ -2,67 +2,57 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Antiquarium Pro — Sonia</title>
+<title>Antiquarium OS — Sonia</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
 
-/* ===== LUXURY THEME ===== */
+/* ===== BLACK LUXURY UI ===== */
 
 :root{
- --bg:#0b0d11;
- --card:#12151c;
- --gold:#c9a24d;
- --txt:#e6e6e6;
- --soft:#888;
+ --bg:#07090d;
+ --card:#0f1219;
+ --gold:#d4af37;
+ --txt:#eee;
+ --muted:#777;
 }
 
 body{
  margin:0;
  background:var(--bg);
- font-family:Inter,sans-serif;
  color:var(--txt);
+ font-family:Inter,sans-serif;
 }
 
-
-/* ===== HEADER ===== */
-
 header{
+ background:#0c0f15;
+ padding:18px 30px;
  display:flex;
  justify-content:space-between;
  align-items:center;
- padding:18px 30px;
- background:#0f1218;
- border-bottom:1px solid #222;
+ border-bottom:1px solid #1c1f26;
 }
 
 header h2{
- margin:0;
- font-weight:600;
- letter-spacing:1px;
  color:var(--gold);
+ letter-spacing:2px;
 }
 
 nav a{
  color:var(--txt);
- margin-left:20px;
- text-decoration:none;
+ margin-left:18px;
+ cursor:pointer;
  font-size:14px;
 }
 
-nav a:hover{
- color:var(--gold);
-}
-
-
-/* ===== LAYOUT ===== */
+nav a:hover{color:var(--gold)}
 
 .container{
- max-width:1100px;
+ max-width:1200px;
  margin:auto;
  padding:25px;
 }
@@ -72,38 +62,31 @@ nav a:hover{
 
 .card{
  background:var(--card);
- border-radius:18px;
+ border-radius:20px;
  padding:25px;
  margin-bottom:25px;
- border:1px solid #1c1f27;
- box-shadow:0 0 40px rgba(0,0,0,.4);
+ border:1px solid #1c1f26;
+ box-shadow:0 0 50px rgba(0,0,0,.6);
 }
 
 h3{
- margin-top:0;
- font-weight:500;
- letter-spacing:.5px;
  color:var(--gold);
+ font-weight:500;
 }
-
-
-/* ===== UI ===== */
 
 button{
  background:var(--gold);
  color:black;
  border:none;
- padding:12px 18px;
+ padding:12px 20px;
  border-radius:10px;
- font-weight:600;
+ font-weight:700;
  cursor:pointer;
 }
 
-button:hover{opacity:.9}
-
-input,textarea,select{
+input,select,textarea{
  width:100%;
- background:#0f1218;
+ background:#0c0f15;
  border:1px solid #222;
  color:var(--txt);
  padding:10px;
@@ -113,40 +96,31 @@ input,textarea,select{
 
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
  gap:15px;
 }
 
 .kpi{
- background:#0f1218;
- border:1px solid #222;
- border-radius:14px;
+ background:#0c0f15;
  padding:15px;
+ border-radius:14px;
  text-align:center;
+ border:1px solid #222;
 }
 
-.kpi b{
- font-size:22px;
- color:var(--gold);
-}
-
-
-/* ===== CHAT ===== */
+.kpi b{color:var(--gold);font-size:22px}
 
 .chat{
- height:220px;
+ height:240px;
  overflow:auto;
- background:#0f1218;
+ background:#0c0f15;
  border:1px solid #222;
- border-radius:10px;
+ border-radius:12px;
  padding:10px;
 }
 
 .user{color:var(--gold)}
 .ai{color:var(--txt)}
-
-
-/* ===== FOOTER ===== */
 
 footer{
  text-align:center;
@@ -160,156 +134,133 @@ footer{
 
 <body>
 
-
 <header>
-
-<h2>ANTIQUARIUM PRO</h2>
+<h2>ANTIQUARIUM OS</h2>
 
 <nav>
- <a onclick="go('home')">Home</a>
- <a onclick="go('sales')">Vendite</a>
- <a onclick="go('pricing')">Prezzi</a>
- <a onclick="go('stock')">Magazzino</a>
- <a onclick="go('market')">Mercato</a>
- <a onclick="go('advisor')">Advisor</a>
+<a onclick="go('home')">Home</a>
+<a onclick="go('analytics')">Analytics</a>
+<a onclick="go('pricing')">Pricing</a>
+<a onclick="go('catalog')">Catalogo AI</a>
+<a onclick="go('market')">Mercato</a>
+<a onclick="go('advisor')">Advisor</a>
+<a onclick="go('reports')">Report</a>
 </nav>
-
 </header>
-
 
 <div class="container">
 
-
-<!-- ================= HOME ================= -->
+<!-- HOME -->
 
 <div id="home" class="page active">
-
 <div class="card">
 
-<h3>Private Art Intelligence System</h3>
+<h3>Private Intelligence System</h3>
 
 <p>
-Dashboard professionale per antiquari.<br>
-Analisi • Prezzi • Mercato • Strategia
+Centro di comando per antiquari professionisti.<br>
+Vendite • Prezzi • Strategie • Arte
 </p>
 
-<button onclick="go('sales')">Apri Dashboard</button>
+<button onclick="go('analytics')">Avvia Sistema</button>
 
 </div>
-
 </div>
 
 
-<!-- ================= SALES ================= -->
+<!-- ANALYTICS -->
 
-<div id="sales" class="page">
+<div id="analytics" class="page">
 
 <div class="card">
-
-<h3>📂 Importa Vendite</h3>
-
-<input type="file" id="file">
-
-<button onclick="load()">Analizza Dati</button>
-
+<h3>📂 Importa Dati</h3>
+<input type="file" id="file" multiple>
+<button onclick="load()">Analizza</button>
 </div>
 
-
 <div class="card">
-
-<h3>📊 Indicatori Principali</h3>
-
+<h3>📊 KPI Globali</h3>
 <div class="grid" id="kpi"></div>
-
 </div>
 
+<div class="card"><canvas id="c1"></canvas></div>
+<div class="card"><canvas id="c2"></canvas></div>
+<div class="card"><canvas id="c3"></canvas></div>
 
 <div class="card">
-
-<h3>📈 Canali di Vendita</h3>
-
-<canvas id="channels"></canvas>
-
-</div>
-
-
-<div class="card">
-
 <h3>🧠 Diagnosi AI</h3>
-
 <div id="ai"></div>
-
 </div>
 
 </div>
 
 
-<!-- ================= PRICING ================= -->
+<!-- PRICING -->
 
 <div id="pricing" class="page">
 
 <div class="card">
 
-<h3>💰 Calcolo Prezzo Ideale</h3>
+<h3>💰 Motore Prezzi</h3>
 
-<label>Costo Acquisto</label>
-<input id="cost">
+<label>Costo</label><input id="cost">
+<label>Restauro</label><input id="rest">
+<label>Anno</label><input id="year">
+<label>Rarità</label>
 
-<label>Restauro / Spese</label>
-<input id="extra">
-
-<label>Rarità (1–5)</label>
-<select id="rarity">
+<select id="rar">
 <option>1</option><option>2</option><option>3</option>
 <option>4</option><option>5</option>
 </select>
 
-<button onclick="priceAI()">Calcola</button>
+<button onclick="price()">Calcola</button>
 
-<div id="priceResult"></div>
-
-</div>
+<div id="priceRes"></div>
 
 </div>
+</div>
 
 
-<!-- ================= STOCK ================= -->
+<!-- CATALOG -->
 
-<div id="stock" class="page">
+<div id="catalog" class="page">
 
 <div class="card">
 
-<h3>📦 Magazzino</h3>
+<h3>📝 Scheda Prodotto AI</h3>
 
-<button onclick="stockAI()">Analizza Inventario</button>
+<input id="obj" placeholder="Nome oggetto">
+<input id="era" placeholder="Epoca">
+<input id="mat" placeholder="Materiale">
+<input id="dim" placeholder="Dimensioni">
 
-<div id="stockResult"></div>
+<button onclick="describe()">Genera Descrizione</button>
+
+<div id="desc"></div>
 
 </div>
-
 </div>
 
 
-<!-- ================= MARKET ================= -->
+<!-- MARKET -->
 
 <div id="market" class="page">
 
 <div class="card">
 
-<h3>🌍 Analisi Mercato</h3>
+<h3>🌍 Scanner Mercato</h3>
 
-<input id="search" placeholder="Es. Natura morta fiamminga">
+<input id="search" placeholder="Oggetto da analizzare">
 
-<button onclick="marketAI()">Cerca</button>
+<button onclick="market()">Cerca</button>
 
-<div id="marketResult"></div>
-
-</div>
+<div id="marketRes"></div>
 
 </div>
+</div>
 
 
-<!-- ================= ADVISOR ================= -->
+<!-- ADVISOR -->
 
 <div id="advisor" class="page">
 
@@ -319,22 +270,35 @@ Analisi • Prezzi • Mercato • Strategia
 
 <div class="chat" id="chat"></div>
 
-<input id="q" placeholder="Chiedi una strategia...">
+<input id="q">
 
-<button onclick="ask()">Invia</button>
-
-</div>
+<button onclick="ask()">Chiedi</button>
 
 </div>
+</div>
 
+
+<!-- REPORT -->
+
+<div id="reports" class="page">
+
+<div class="card">
+
+<h3>📑 Report Manager</h3>
+
+<button onclick="report()">Genera Report</button>
+
+<div id="rep"></div>
+
+</div>
+</div>
 
 </div>
 
 
 <footer>
-© 2026 Antiquarium Pro — Sonia Farsi
+© 2026 Antiquarium OS — Sonia
 </footer>
-
 
 
 <script>
@@ -343,69 +307,78 @@ let data=[];
 let stats={};
 
 
-// ===== NAV =====
+// NAV
 
 function go(p){
-
- document.querySelectorAll(".page")
- .forEach(x=>x.classList.remove("active"));
-
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
  document.getElementById(p).classList.add("active");
 }
 
 
-// ===== LOAD =====
+// LOAD
 
 function load(){
 
-let f=document.getElementById("file").files[0];
-if(!f){alert("Carica file");return;}
+const files=document.getElementById("file").files;
+if(!files.length)return;
 
-let r=new FileReader();
+data=[];
+let done=0;
 
-r.onload=e=>{
+for(let f of files){
 
- let wb=XLSX.read(e.target.result,{type:"binary"});
- let sh=wb.Sheets[wb.SheetNames[0]];
- data=XLSX.utils.sheet_to_json(sh);
+ const r=new FileReader();
 
- analyze();
-};
+ r.onload=e=>{
 
-r.readAsBinaryString(f);
+  const wb=XLSX.read(e.target.result,{type:"binary"});
+  const sh=wb.Sheets[wb.SheetNames[0]];
+  data=data.concat(XLSX.utils.sheet_to_json(sh));
+
+  done++;
+  if(done===files.length) analyze();
+ };
+
+ r.readAsBinaryString(f);
+}
+
 }
 
 
-// ===== ANALYSIS =====
+// ANALYZE
 
 function analyze(){
 
-let tot=0,prof=0;
-let ch={};
+let tot=0,prof=0,count=0;
+let ch={},yr={};
 
 data.forEach(r=>{
 
- let p=Number(r["prezzo di vendita"]||0);
- let pr=Number(r["profitto"]||0);
+ let p=+r["prezzo di vendita"]||0;
+ let pr=+r["profitto"]||0;
+ let y=r["Anno"];
+
  let c=r["luogo di vendita"];
 
  if(p){
   tot+=p;
   prof+=pr;
+  count++;
   if(c) ch[c]=(ch[c]||0)+p;
+  if(y) yr[y]=(yr[y]||0)+p;
  }
 });
 
-stats={tot,prof,ch};
+stats={tot,prof,count,ch,yr};
 
 kpi();
-chart();
+charts();
 ai();
 
 }
 
 
-// ===== KPI =====
+// KPI
 
 function kpi(){
 
@@ -413,41 +386,49 @@ let m=(stats.prof/stats.tot*100)||0;
 
 document.getElementById("kpi").innerHTML=`
 
-<div class="kpi"><b>${stats.tot.toFixed(0)}€</b><br>Vendite</div>
-
-<div class="kpi"><b>${stats.prof.toFixed(0)}€</b><br>Profitto</div>
-
+<div class="kpi"><b>${stats.tot.toFixed(0)}€</b><br>Fatturato</div>
+<div class="kpi"><b>${stats.prof.toFixed(0)}€</b><br>Utile</div>
 <div class="kpi"><b>${m.toFixed(1)}%</b><br>Margine</div>
-
-<div class="kpi"><b>${stats.tot>80000?"ELITE":"GROW"}</b><br>Status</div>
+<div class="kpi"><b>${stats.count}</b><br>Vendite</div>
 
 `;
+
 }
 
 
-// ===== CHART =====
+// CHARTS
 
-function chart(){
+function charts(){
 
-let ctx=document.getElementById("channels");
+draw("c1",stats.ch,"Canali");
+draw("c2",stats.yr,"Per Anno");
+draw("c3",stats.ch,"Rotazione");
+
+}
+
+
+function draw(id,obj,l){
+
+let ctx=document.getElementById(id);
 
 if(ctx.chart)ctx.chart.destroy();
 
 ctx.chart=new Chart(ctx,{
  type:"bar",
  data:{
-  labels:Object.keys(stats.ch),
+  labels:Object.keys(obj),
   datasets:[{
-   label:"Canali",
-   data:Object.values(stats.ch),
-   backgroundColor:"#c9a24d"
+   label:l,
+   data:Object.values(obj),
+   backgroundColor:"#d4af37"
   }]
  }
 });
+
 }
 
 
-// ===== AI =====
+// AI
 
 function ai(){
 
@@ -455,97 +436,84 @@ let best=max(stats.ch);
 
 let t=`
 
-🔥 Dominante: <b>${best}</b><br>
-📌 Priorità: rafforza questo canale<br>
-
-💡 Aumenta margine del 7%
+🔥 Dominante: ${best}<br>
+📈 Espandi presenza<br>
+💡 Migliora storytelling<br>
+⚠️ Riduci costi inutili
 
 `;
-
-if(stats.prof/stats.tot<0.3){
- t+="<br>⚠️ Margine critico";
-}
 
 document.getElementById("ai").innerHTML=t;
 }
 
 
-// ===== PRICING AI =====
+// PRICING
 
-function priceAI(){
+function price(){
 
 let c=+cost.value||0;
-let e=+extra.value||0;
-let r=+rarity.value;
+let r=+rest.value||0;
+let y=+year.value||1900;
+let ra=+rar.value;
 
-let base=(c+e)*1.8;
+let age=new Date().getFullYear()-y;
 
-let mult=1+(r*0.25);
+let base=(c+r)*1.6;
+let mult=1+(ra*0.2)+(age/500);
 
 let price=base*mult;
 
-document.getElementById("priceResult").innerHTML=`
+document.getElementById("priceRes").innerHTML=`
 
-💎 Prezzo suggerito:<br>
-<b style="color:var(--gold)">${price.toFixed(0)} €</b><br><br>
-
-Markup: ${(mult*100-100).toFixed(0)}%
+Prezzo consigliato: <b style="color:var(--gold)">${price.toFixed(0)}€</b>
 
 `;
-
 }
 
 
-// ===== STOCK AI =====
+// DESCRIBE
 
-function stockAI(){
+function describe(){
 
-let slow=0,fast=0;
+let o=obj.value;
+let e=era.value;
+let m=mat.value;
+let d=dim.value;
 
-data.forEach(r=>{
+let txt=`
 
- let p=Number(r["prezzo di vendita"]||0);
+<strong>${o}</strong><br><br>
 
- if(p<500) slow++;
- else fast++;
-});
+Raffinato esemplare risalente all'epoca ${e},
+realizzato in ${m}.
+Dimensioni: ${d}.<br><br>
 
-document.getElementById("stockResult").innerHTML=`
-
-⚡ Rotazione veloce: ${fast}<br>
-🐌 Rotazione lenta: ${slow}<br><br>
-
-Consiglio: sconta i lenti
+Opera di notevole pregio storico ed estetico,
+ideale per collezionisti esigenti.
 
 `;
 
+document.getElementById("desc").innerHTML=txt;
 }
 
 
-// ===== MARKET AI =====
+// MARKET
 
-function marketAI(){
+function market(){
 
 let q=search.value;
 
-let url="https://www.google.com/search?q="+encodeURIComponent(q+" antiquariato prezzo asta");
+let url="https://www.google.com/search?q="+encodeURIComponent(q+" antiquariato asta prezzo");
 
-document.getElementById("marketResult").innerHTML=`
+document.getElementById("marketRes").innerHTML=`
 
-🔍 Ricerca mercato:<br>
-
-<a href="${url}" target="_blank" style="color:var(--gold)">
-Confronta online
-</a><br><br>
-
-Suggerimento: verifica aste internazionali
+<a href="${url}" target="_blank" style="color:var(--gold)">Analizza Mercato</a>
 
 `;
-
 }
 
 
-// ===== CHAT AI =====
+// CHAT
 
 function ask(){
 
@@ -558,7 +526,7 @@ let r=aiChat(q.toLowerCase());
 
 setTimeout(()=>add("AI",r,"ai"),400);
 
-document.getElementById("q").value="";
+q.value="";
 }
 
 
@@ -572,35 +540,23 @@ d.scrollTop=d.scrollHeight;
 }
 
 
-// ===== AI LOGIC =====
+// AI CHAT
 
 function aiChat(q){
 
-if(q.includes("compra")){
- return "Compra opere certificate e firmate";
-}
+if(q.includes("compra")) return "Punta su opere certificate";
 
-if(q.includes("prezzo")){
- return "Markup ideale 70–120%";
-}
+if(q.includes("prezzo")) return "Markup ideale 80–130%";
 
-if(q.includes("vend")){
- return "Spingi su "+max(stats.ch);
-}
+if(q.includes("vend")) return "Spingi su "+max(stats.ch);
 
-if(q.includes("rischio")){
- return "Evita opere senza provenienza";
-}
+if(q.includes("rischio")) return "Evita pezzi senza provenienza";
 
-if(q.includes("futuro")){
- return "Crescita su pittura europea 800–900";
-}
-
-return "Focus su qualità + reputazione";
+return "Focus su qualità, rarità e provenienza";
 }
 
 
-// ===== UTILS =====
+// UTILS
 
 function max(o){
  return Object.keys(o).reduce((a,b)=>o[a]>o[b]?a:b);

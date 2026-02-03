@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard Sonia</title>
+<title>Sonia AI Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -10,7 +10,7 @@
 <style>
 body{
   font-family: Arial;
-  background:#f2f4f8;
+  background:#eef2f7;
   padding:20px;
 }
 
@@ -21,7 +21,7 @@ h1{text-align:center}
   padding:15px;
   margin:15px 0;
   border-radius:10px;
-  box-shadow:0 0 10px #ddd;
+  box-shadow:0 0 8px #ccc;
 }
 
 button{
@@ -32,30 +32,35 @@ button{
   border:none;
   border-radius:8px;
   font-size:16px;
-  margin-top:10px;
 }
 
-input{width:100%}
-
-.stat{
-  font-size:18px;
+input{
+  width:100%;
+  padding:8px;
   margin:5px 0;
+}
+
+.chat{
+  height:180px;
+  overflow:auto;
+  border:1px solid #ddd;
+  padding:10px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>📊 Dashboard Business Sonia</h1>
+<h1>🤖 Sonia Business AI</h1>
 
 <div class="box">
 <h3>📂 Carica Excel / CSV</h3>
 <input type="file" id="file">
-<button onclick="load()">Analizza</button>
+<button onclick="loadFile()">Analizza</button>
 </div>
 
 <div class="box">
-<h3>💰 Totali</h3>
+<h3>💰 Sintesi</h3>
 <div id="totali"></div>
 </div>
 
@@ -70,39 +75,32 @@ input{width:100%}
 </div>
 
 <div class="box">
-<h3>📅 Mesi</h3>
-<canvas id="mesi"></canvas>
+<h3>🧠 Consigli AI</h3>
+<div id="insight"></div>
 </div>
 
 <div class="box">
-<h3>🌍 Clienti</h3>
-<div id="clienti"></div>
-</div>
-
-<div class="box">
-<h3>🤖 Intelligenza Artificiale</h3>
-<div id="ai"></div>
-</div>
-
-<div class="box">
-<h3>🏆 Top Vendite</h3>
-<div id="top"></div>
+<h3>💬 Chat</h3>
+<div class="chat" id="chat"></div>
+<input id="q" placeholder="Scrivi una domanda...">
+<button onclick="ask()">Chiedi</button>
 </div>
 
 <script>
 
 let dati=[];
+let stats={};
 
-function load(){
+function loadFile(){
 
-const f=document.getElementById("file").files[0];
-if(!f){alert("Carica un file!");return;}
+let f=document.getElementById("file").files[0];
+if(!f){alert("Carica un file");return;}
 
-const r=new FileReader();
+let r=new FileReader();
 
 r.onload=e=>{
- const wb=XLSX.read(e.target.result,{type:"binary"});
- const sh=wb.Sheets[wb.SheetNames[0]];
+ let wb=XLSX.read(e.target.result,{type:"binary"});
+ let sh=wb.Sheets[wb.SheetNames[0]];
  dati=XLSX.utils.sheet_to_json(sh);
  analizza();
 };
@@ -111,13 +109,10 @@ r.readAsBinaryString(f);
 }
 
 
-// ================= ANALISI =================
-
 function analizza(){
 
-let canali={},tipi={},mesi={},clienti={};
-
-let tot=0, profit=0;
+let canali={},tipi={};
+let tot=0,prof=0;
 
 dati.forEach(r=>{
 
@@ -126,47 +121,42 @@ dati.forEach(r=>{
 
  let c=r["luogo di vendita"];
  let t=r["TIPOLOGIA"];
- let m=r["MeseNorm"];
- let cl=r["Nazionalita acquirente"];
 
  if(p>0){
+
   tot+=p;
-  profit+=pr;
+  prof+=pr;
 
   if(c) canali[c]=(canali[c]||0)+p;
   if(t) tipi[t]=(tipi[t]||0)+p;
-  if(m) mesi[m]=(mesi[m]||0)+p;
-  if(cl) clienti[cl]=(clienti[cl]||0)+p;
  }
+
 });
 
-mostraTotali(tot,profit);
+stats={tot,prof,canali,tipi};
+
+mostra();
 grafico("canali",canali,"Canali");
 grafico("tipi",tipi,"Tipologie");
-grafico("mesi",mesi,"Mesi");
-
-mostraClienti(clienti);
-topVendite();
-intelligenza(canali,tipi,tot,profit);
+consigli();
 }
 
 
-// ================= UI =================
+function mostra(){
 
-function mostraTotali(t,p){
+let m=(stats.prof/stats.tot*100)||0;
 
 document.getElementById("totali").innerHTML=`
-<div class="stat">💶 Vendite: <b>${t.toFixed(2)} €</b></div>
-<div class="stat">📈 Profitto: <b>${p.toFixed(2)} €</b></div>
-<div class="stat">📊 Margine: <b>${((p/t)*100).toFixed(1)}%</b></div>
+Vendite: <b>${stats.tot.toFixed(0)} €</b><br>
+Profitto: <b>${stats.prof.toFixed(0)} €</b><br>
+Margine: <b>${m.toFixed(1)}%</b>
 `;
-
 }
 
 
-function grafico(id,obj,titolo){
+function grafico(id,obj,t){
 
-const ctx=document.getElementById(id);
+let ctx=document.getElementById(id);
 
 if(ctx.chart) ctx.chart.destroy();
 
@@ -175,90 +165,65 @@ ctx.chart=new Chart(ctx,{
  data:{
   labels:Object.keys(obj),
   datasets:[{
-   label:titolo,
+   label:t,
    data:Object.values(obj)
   }]
  }
 });
-
 }
 
 
-function mostraClienti(o){
+function consigli(){
 
-let s=Object.entries(o)
-.sort((a,b)=>b[1]-a[1])
-.slice(0,5);
-
-let h="";
-
-s.forEach(x=>{
- h+=`🌍 ${x[0]} → ${x[1].toFixed(0)} €<br>`;
-});
-
-document.getElementById("clienti").innerHTML=h;
-
-}
-
-
-function topVendite(){
-
-let top=dati
-.filter(x=>x["prezzo di vendita"])
-.sort((a,b)=>b["prezzo di vendita"]-a["prezzo di vendita"])
-.slice(0,5);
-
-let h="";
-
-top.forEach(x=>{
- h+=`🏆 ${x["Merce venduta"]} → ${x["prezzo di vendita"]} €<br>`;
-});
-
-document.getElementById("top").innerHTML=h;
-
-}
-
-
-// ================= AI =================
-
-function intelligenza(canali,tipi,tot,prof){
-
-let bc=max(canali);
-let wc=min(canali);
-
-let bt=max(tipi);
-let wt=min(tipi);
+let bc=max(stats.canali);
+let bt=max(stats.tipi);
 
 let txt=`
-💡 Totale: ${tot.toFixed(0)} €<br><br>
-
-🔥 Spingi su: <b>${bc}</b><br>
-⚠️ Riduci: <b>${wc}</b><br><br>
-
-💎 Compra più: <b>${bt}</b><br>
-❌ Evita: <b>${wt}</b><br><br>
-📈 Margine: ${(prof/tot*100).toFixed(1)}%
+🔥 Miglior canale: ${bc}<br>
+💎 Miglior tipologia: ${bt}<br>
 `;
 
-if(prof/tot<0.3){
- txt+=`<br>⚠️ Margine basso → alza i prezzi`;
+if(stats.prof/stats.tot<0.3){
+ txt+="⚠️ Margine basso<br>";
 }
 
-if(tot>100000){
- txt+=`<br>🚀 Livello business PRO`;
+document.getElementById("insight").innerHTML=txt;
 }
 
-document.getElementById("ai").innerHTML=txt;
 
+function ask(){
+
+let q=document.getElementById("q").value.toLowerCase();
+if(!q)return;
+
+let r="";
+
+if(q.includes("vend")){
+ r="Vendi meglio su "+max(stats.canali);
+}
+else if(q.includes("compra")){
+ r="Compra più "+max(stats.tipi);
+}
+else if(q.includes("profit")){
+ r="Profitto: "+stats.prof.toFixed(0)+" €";
+}
+else{
+ r="Concentrati su "+max(stats.tipi)+" e "+max(stats.canali);
+}
+
+let c=document.getElementById("chat");
+
+c.innerHTML+=`<div><b>Tu:</b> ${q}</div>`;
+c.innerHTML+=`<div><b>AI:</b> ${r}</div>`;
+
+c.scrollTop=c.scrollHeight;
+
+document.getElementById("q").value="";
 }
 
 
 function max(o){
-return Object.keys(o).reduce((a,b)=>o[a]>o[b]?a:b);
-}
-
-function min(o){
-return Object.keys(o).reduce((a,b)=>o[a]<o[b]?a:b);
+ return Object.keys(o).reduce((a,b)=>o[a]>o[b]?a:b);
 }
 
 </script>
